@@ -26,7 +26,7 @@ namespace Carma2ForgeLib.Modules.FontModule {
       LoadFontColEntries();
     }
 
-    public FontColEntry[] GetFontColDefs() {
+    public FontColEntry[] GetFontColEntries() {
       return fontColDefs.ToArray();
     }
 
@@ -35,10 +35,7 @@ namespace Carma2ForgeLib.Modules.FontModule {
       using IEnumerator<string> fontColLines = config.ReadTxt(Carma2File.FontCol).GetEnumerator();
 
       while (fontColLines.MoveNext()) {
-        string line = fontColLines.Current.Trim();
-        if (line == string.Empty || (line.StartsWith("//") && !line.StartsWith("//#define"))) {
-          continue;
-        }
+        string line = fontColLines.Current;
 
         if (line.StartsWith("//#define")) {
           string[] definitionParts = line.Split(new char[0], StringSplitOptions.RemoveEmptyEntries);

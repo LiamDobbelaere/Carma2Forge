@@ -1,0 +1,71 @@
+﻿namespace Carma2Forge {
+  partial class OpponentEditor {
+    /// <summary>
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.IContainer components = null;
+
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+    protected override void Dispose(bool disposing) {
+      if (disposing && (components != null)) {
+        components.Dispose();
+      }
+      base.Dispose(disposing);
+    }
+
+    #region Windows Form Designer generated code
+
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent() {
+      lvOpponents = new ListView();
+      columnHeader1 = new ColumnHeader();
+      columnHeader2 = new ColumnHeader();
+      SuspendLayout();
+      // 
+      // lvOpponents
+      // 
+      lvOpponents.AllowColumnReorder = true;
+      lvOpponents.Columns.AddRange(new ColumnHeader[] { columnHeader1, columnHeader2 });
+      lvOpponents.Dock = DockStyle.Left;
+      lvOpponents.Location = new Point(0, 0);
+      lvOpponents.MultiSelect = false;
+      lvOpponents.Name = "lvOpponents";
+      lvOpponents.Size = new Size(317, 450);
+      lvOpponents.TabIndex = 2;
+      lvOpponents.UseCompatibleStateImageBehavior = false;
+      lvOpponents.View = View.Details;
+      // 
+      // columnHeader1
+      // 
+      columnHeader1.Text = "Name";
+      columnHeader1.Width = 256;
+      // 
+      // columnHeader2
+      // 
+      columnHeader2.Text = "Id";
+      // 
+      // OpponentEditor
+      // 
+      AutoScaleDimensions = new SizeF(7F, 15F);
+      AutoScaleMode = AutoScaleMode.Font;
+      ClientSize = new Size(800, 450);
+      Controls.Add(lvOpponents);
+      Name = "OpponentEditor";
+      Text = "Opponent Editor";
+      Load += OpponentEditor_Load;
+      ResumeLayout(false);
+    }
+
+    #endregion
+
+    private ListView lvOpponents;
+    private ColumnHeader columnHeader1;
+    private ColumnHeader columnHeader2;
+  }
+}

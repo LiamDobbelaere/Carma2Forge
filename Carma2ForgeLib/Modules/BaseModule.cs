@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Carma2ForgeLib.Enums;
 
 namespace Carma2ForgeLib.Modules {
   public class Carma2ForgeConfig {
@@ -10,7 +11,22 @@ namespace Carma2ForgeLib.Modules {
     public required string DataPath { get; set; }
 
     public IEnumerable<string> ReadTxt(string relativePath) {
-      return File.ReadLines(Path.Combine(Carma2Path, DataPath, relativePath));
+      IEnumerable <string> fileLinesEnumerable = File.ReadLines(Path.Combine(Carma2Path, DataPath, relativePath));
+      using IEnumerator<string> fileLines = fileLinesEnumerable.GetEnumerator();
+
+      while (fileLines.MoveNext()) {
+        string trimmedLine = fileLines.Current.Trim();
+        if (trimmedLine == string.Empty || (trimmedLine.StartsWith("//") && !trimmedLine.StartsWith("//#define"))) {
+          continue;
+        }
+
+        // remove everything after //
+        if (!trimmedLine.StartsWith("//#define") && trimmedLine.Contains("//")) {
+          trimmedLine = trimmedLine.Split(new string[] { "//" }, StringSplitOptions.None)[0].Trim();
+        }
+
+        yield return trimmedLine;
+      }
     }
 
     public void WriteTxt(string relativePath, IEnumerable<string> lines) {

@@ -28,7 +28,8 @@
     /// </summary>
     private void InitializeComponent() {
       fbdCarmaPath = new FolderBrowserDialog();
-      btnFontEditing = new Button();
+      btnFontEditor = new Button();
+      btnOpponentEditor = new Button();
       SuspendLayout();
       // 
       // fbdCarmaPath
@@ -37,22 +38,33 @@
       fbdCarmaPath.RootFolder = Environment.SpecialFolder.MyComputer;
       fbdCarmaPath.ShowNewFolderButton = false;
       // 
-      // btnFontEditing
+      // btnFontEditor
       // 
-      btnFontEditing.Location = new Point(331, 99);
-      btnFontEditing.Name = "btnFontEditing";
-      btnFontEditing.Size = new Size(116, 35);
-      btnFontEditing.TabIndex = 0;
-      btnFontEditing.Text = "Font Editor";
-      btnFontEditing.UseVisualStyleBackColor = true;
-      btnFontEditing.Click += btnFontEditing_Click;
+      btnFontEditor.Location = new Point(342, 249);
+      btnFontEditor.Name = "btnFontEditor";
+      btnFontEditor.Size = new Size(116, 35);
+      btnFontEditor.TabIndex = 0;
+      btnFontEditor.Text = "Font Editor";
+      btnFontEditor.UseVisualStyleBackColor = true;
+      btnFontEditor.Click += btnFontEditing_Click;
+      // 
+      // btnOpponentEditor
+      // 
+      btnOpponentEditor.Location = new Point(342, 208);
+      btnOpponentEditor.Name = "btnOpponentEditor";
+      btnOpponentEditor.Size = new Size(116, 35);
+      btnOpponentEditor.TabIndex = 1;
+      btnOpponentEditor.Text = "Opponent Editor";
+      btnOpponentEditor.UseVisualStyleBackColor = true;
+      btnOpponentEditor.Click += btnOpponentEditor_Click;
       // 
       // MainForm
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
       AutoScaleMode = AutoScaleMode.Font;
       ClientSize = new Size(800, 450);
-      Controls.Add(btnFontEditing);
+      Controls.Add(btnOpponentEditor);
+      Controls.Add(btnFontEditor);
       Name = "MainForm";
       Text = "Form1";
       Load += MainForm_Load;
@@ -62,6 +74,7 @@
     #endregion
 
     private FolderBrowserDialog fbdCarmaPath;
-    private Button btnFontEditing;
+    private Button btnFontEditor;
+    private Button btnOpponentEditor;
   }
 }

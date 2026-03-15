@@ -1,6 +1,6 @@
 ﻿
 namespace Carma2Forge {
-  partial class FontForm {
+  partial class FontEditor {
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -109,7 +109,7 @@ namespace Carma2Forge {
       btnSave.UseVisualStyleBackColor = true;
       btnSave.Click += btnSave_Click;
       // 
-      // FontForm
+      // FontEditor
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
       AutoScaleMode = AutoScaleMode.Font;
@@ -120,8 +120,8 @@ namespace Carma2Forge {
       Controls.Add(ceTopRight);
       Controls.Add(ceTopLeft);
       Controls.Add(lvFontColDefs);
-      Name = "FontForm";
-      Text = "FontForm";
+      Name = "FontEditor";
+      Text = "Font Editor";
       FormClosing += FontForm_FormClosing;
       Load += FontForm_Load;
       ResumeLayout(false);

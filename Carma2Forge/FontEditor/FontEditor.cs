@@ -11,7 +11,7 @@ using Carma2ForgeLib.Modules;
 using Carma2ForgeLib.Modules.FontModule;
 
 namespace Carma2Forge {
-  public partial class FontForm : Form {
+  public partial class FontEditor : Form {
     private FontModule fontModule = new FontModule();
 
     private bool _hasChanges = false;
@@ -26,7 +26,7 @@ namespace Carma2Forge {
       }
     }
 
-    public FontForm(Carma2ForgeConfig config) {
+    public FontEditor(Carma2ForgeConfig config) {
       fontModule.Initialize(config);
 
       InitializeComponent();
@@ -97,7 +97,7 @@ namespace Carma2Forge {
     }
 
     private void RefreshFontColDefImages() {
-      FontColEntry[] fcds = fontModule.GetFontColDefs();
+      FontColEntry[] fcds = fontModule.GetFontColEntries();
 
       ImageList imageList = new ImageList();
       imageList.ImageSize = new Size(32, 32);
@@ -118,7 +118,7 @@ namespace Carma2Forge {
     }
 
     private void FontForm_Load(object sender, EventArgs e) {
-      FontColEntry[] fcds = fontModule.GetFontColDefs();
+      FontColEntry[] fcds = fontModule.GetFontColEntries();
 
       RefreshFontColDefImages();
 

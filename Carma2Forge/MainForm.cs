@@ -1,8 +1,4 @@
-using System.Diagnostics;
 using Carma2ForgeLib.Modules;
-using Carma2ForgeLib.Modules.FontModule;
-using System.Drawing;
-using Color = System.Drawing.Color;
 
 namespace Carma2Forge {
   public partial class MainForm : Form {
@@ -78,7 +74,11 @@ namespace Carma2Forge {
     }
 
     private void btnFontEditing_Click(object sender, EventArgs e) {
-      new FontForm(config).Show();
+      new FontEditor(config).Show();
+    }
+
+    private void btnOpponentEditor_Click(object sender, EventArgs e) {
+      new OpponentEditor(config).Show();
     }
   }
 }
