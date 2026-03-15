@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Carma2Forge", "Carma2Forge.csproj", "{950EDABB-1D88-4067-B465-A9F350E19CB8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Carma2Forge", "Carma2Forge\Carma2Forge.csproj", "{084CB9F3-7A97-4B23-8C50-9203FCE16B0C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Carma2ForgeLib", "Carma2ForgeLib\Carma2ForgeLib.csproj", "{DAFA8847-FE8F-4FD2-BF80-F684CACA60B8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Carma2ForgeLib", "Carma2ForgeLib\Carma2ForgeLib.csproj", "{276ED9BC-8A4D-4091-8421-0A9B52A4D7EE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{950EDABB-1D88-4067-B465-A9F350E19CB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{950EDABB-1D88-4067-B465-A9F350E19CB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{950EDABB-1D88-4067-B465-A9F350E19CB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{950EDABB-1D88-4067-B465-A9F350E19CB8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DAFA8847-FE8F-4FD2-BF80-F684CACA60B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DAFA8847-FE8F-4FD2-BF80-F684CACA60B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DAFA8847-FE8F-4FD2-BF80-F684CACA60B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DAFA8847-FE8F-4FD2-BF80-F684CACA60B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{084CB9F3-7A97-4B23-8C50-9203FCE16B0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{084CB9F3-7A97-4B23-8C50-9203FCE16B0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{084CB9F3-7A97-4B23-8C50-9203FCE16B0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{084CB9F3-7A97-4B23-8C50-9203FCE16B0C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{276ED9BC-8A4D-4091-8421-0A9B52A4D7EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{276ED9BC-8A4D-4091-8421-0A9B52A4D7EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{276ED9BC-8A4D-4091-8421-0A9B52A4D7EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{276ED9BC-8A4D-4091-8421-0A9B52A4D7EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
