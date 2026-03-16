@@ -1,0 +1,4 @@
+32x... folders can be safely deleted without carmageddon crashing
+Also folders like "handpx" and "cursgibx" and even "handx" can be discarded in INTRFACE
+INTRFACE/Interface.txt contains many texts used in the main menus (such as the word for Group)
+Fonts are not blended with the selected color, instead only their alpha channel is taken over and the color comes from FontCol.TXT

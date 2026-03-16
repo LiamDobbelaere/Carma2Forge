@@ -25,6 +25,18 @@ namespace Carma2ForgeLib.Modules.OpponentModule {
     public required string weight;
     public required string zeroToSixty;
     public required string description;
+
+    public string CanonicalName {
+      get {
+        return vehicleFileName.Split('.')[0].ToLower();
+      }
+    }
+
+    public string CarImagePath {
+      get {
+        return $"INTRFACE/CarImage/{CanonicalName}CI.TWT";
+      }
+    }
   }
 
   public class OpponentModule : BaseModule {
