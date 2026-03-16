@@ -29,6 +29,10 @@ namespace Carma2ForgeLib.Modules {
       }
     }
 
+    public BinaryReader ReadBinary(string relativePath) {
+      return new BinaryReader(File.OpenRead(Path.Combine(Carma2Path, DataPath, relativePath)));
+    }
+
     public void WriteTxt(string relativePath, IEnumerable<string> lines) {
       File.WriteAllLines(Path.Combine(Carma2Path, DataPath, relativePath), lines);
     }

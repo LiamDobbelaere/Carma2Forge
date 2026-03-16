@@ -30,6 +30,7 @@
       fbdCarmaPath = new FolderBrowserDialog();
       btnFontEditor = new Button();
       btnOpponentEditor = new Button();
+      btnTwtEditor = new Button();
       SuspendLayout();
       // 
       // fbdCarmaPath
@@ -58,11 +59,22 @@
       btnOpponentEditor.UseVisualStyleBackColor = true;
       btnOpponentEditor.Click += btnOpponentEditor_Click;
       // 
+      // btnTwtEditor
+      // 
+      btnTwtEditor.Location = new Point(342, 290);
+      btnTwtEditor.Name = "btnTwtEditor";
+      btnTwtEditor.Size = new Size(116, 35);
+      btnTwtEditor.TabIndex = 2;
+      btnTwtEditor.Text = "TWT Editor";
+      btnTwtEditor.UseVisualStyleBackColor = true;
+      btnTwtEditor.Click += btnTwtEditor_Click;
+      // 
       // MainForm
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
       AutoScaleMode = AutoScaleMode.Font;
       ClientSize = new Size(800, 450);
+      Controls.Add(btnTwtEditor);
       Controls.Add(btnOpponentEditor);
       Controls.Add(btnFontEditor);
       Name = "MainForm";
@@ -76,5 +88,6 @@
     private FolderBrowserDialog fbdCarmaPath;
     private Button btnFontEditor;
     private Button btnOpponentEditor;
+    private Button btnTwtEditor;
   }
 }
