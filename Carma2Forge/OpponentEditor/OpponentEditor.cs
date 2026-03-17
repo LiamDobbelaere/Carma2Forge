@@ -62,13 +62,18 @@ namespace Carma2Forge {
 
       pbxCarInterface.Image = carInterface;
 
-      ReparentLabelForTransparency(lblCarName, pbxCarInterface);
-      ReparentLabelForTransparency(lblDriverName, pbxCarInterface);
-      ReparentLabelForTransparency(lblCarStats, pbxCarInterface);
-      ReparentLabelForTransparency(lblCarDescription, pbxCarInterface);
+      ReparentForTransparency(lblCarName, pbxCarInterface);
+      ReparentForTransparency(lblDriverName, pbxCarInterface);
+      ReparentForTransparency(lblCarStats, pbxCarInterface);
+      ReparentForTransparency(lblCarDescription, pbxCarInterface);
+
+      ReparentForTransparency(pbxCar, pbxCarInterface);
+      ReparentForTransparency(pbxDriver, pbxCarInterface);
+
+      pbxDriver.BringToFront();
     }
 
-    private void ReparentLabelForTransparency(System.Windows.Forms.Label source, PictureBox newParent) {
+    private void ReparentForTransparency(Control source, PictureBox newParent) {
       source.Location = newParent.PointToClient(source.PointToScreen(Point.Empty));
       source.Parent = newParent;
     }
@@ -81,8 +86,21 @@ namespace Carma2Forge {
       OpponentEntry selectedOpponent = (OpponentEntry)lvOpponents.SelectedItems[0].Tag;
       string canonicalName = selectedOpponent.CanonicalName;
 
-      TwtFile twtFile = twtModule.LoadTwt(selectedOpponent.CarImagePath);
-      PixiesFile pf = pixiesModule.ReadPixies(twtFile.GetFile("PIXIES.P16"));
+      lblCarName.Text = selectedOpponent.carName;
+      lblDriverName.Text = selectedOpponent.longName;
+      lblCarStats.Text = $"{selectedOpponent.topSpeed}\n{selectedOpponent.weight}\n{selectedOpponent.zeroToSixty}";
+      lblCarDescription.Text = selectedOpponent.description;
+
+      TwtFile twtFile;
+      PixiesFile pf;
+      try {
+        twtFile = twtModule.LoadTwt(selectedOpponent.CarImagePath);
+        pf = pixiesModule.ReadPixies(twtFile.GetFile("PIXIES.P16"));
+      } catch (Exception ex) {
+        pbxCar.Image = null;
+        pbxDriver.Image = null;
+        return;
+      }
 
       string[] pictureSegments = new string[] {
         $"{canonicalName}a",
@@ -139,11 +157,6 @@ namespace Carma2Forge {
 
       pbxCar.Image = bmpCurrentCarImage;
       pbxDriver.Image = bmpCurrentDriverImage;
-
-      lblCarName.Text = selectedOpponent.carName;
-      lblDriverName.Text = selectedOpponent.longName;
-      lblCarStats.Text = $"{selectedOpponent.topSpeed}\n{selectedOpponent.weight}\n{selectedOpponent.zeroToSixty}";
-      lblCarDescription.Text = selectedOpponent.description;
     }
   }
 }

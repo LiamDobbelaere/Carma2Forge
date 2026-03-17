@@ -40,7 +40,7 @@ namespace Carma2ForgeLib.Modules.PixiesModule {
 
       public PixiesFileEntry GetFile(string filename) {
         foreach (PixiesFileEntry entry in entries) {
-          if (entry.filename == filename) {
+          if (entry.filename.ToLower() == filename.ToLower()) {
             return entry;
           }
         }
