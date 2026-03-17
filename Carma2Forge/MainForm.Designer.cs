@@ -31,6 +31,7 @@
       btnFontEditor = new Button();
       btnOpponentEditor = new Button();
       btnTwtEditor = new Button();
+      btnRaceEditor = new Button();
       SuspendLayout();
       // 
       // fbdCarmaPath
@@ -69,11 +70,22 @@
       btnTwtEditor.UseVisualStyleBackColor = true;
       btnTwtEditor.Click += btnTwtEditor_Click;
       // 
+      // btnRaceEditor
+      // 
+      btnRaceEditor.Location = new Point(342, 167);
+      btnRaceEditor.Name = "btnRaceEditor";
+      btnRaceEditor.Size = new Size(116, 35);
+      btnRaceEditor.TabIndex = 3;
+      btnRaceEditor.Text = "Race Editor";
+      btnRaceEditor.UseVisualStyleBackColor = true;
+      btnRaceEditor.Click += btnRaceEditor_Click;
+      // 
       // MainForm
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
       AutoScaleMode = AutoScaleMode.Font;
       ClientSize = new Size(800, 450);
+      Controls.Add(btnRaceEditor);
       Controls.Add(btnTwtEditor);
       Controls.Add(btnOpponentEditor);
       Controls.Add(btnFontEditor);
@@ -89,5 +101,6 @@
     private Button btnFontEditor;
     private Button btnOpponentEditor;
     private Button btnTwtEditor;
+    private Button btnRaceEditor;
   }
 }

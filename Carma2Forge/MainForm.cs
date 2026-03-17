@@ -84,5 +84,9 @@ namespace Carma2Forge {
     private void btnTwtEditor_Click(object sender, EventArgs e) {
       new TwtEditor(config).Show();
     }
+
+    private void btnRaceEditor_Click(object sender, EventArgs e) {
+      new RaceEditor(config).Show();
+    }
   }
 }
