@@ -27,6 +27,8 @@ namespace Carma2Forge {
       lvRaces = new ListView();
       columnHeader1 = new ColumnHeader();
       colorDialog1 = new ColorDialog();
+      pictureBox1 = new PictureBox();
+      ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
       SuspendLayout();
       // 
       // lvRaces
@@ -34,6 +36,7 @@ namespace Carma2Forge {
       lvRaces.AllowColumnReorder = true;
       lvRaces.Columns.AddRange(new ColumnHeader[] { columnHeader1 });
       lvRaces.Dock = DockStyle.Left;
+      lvRaces.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
       lvRaces.Location = new Point(0, 0);
       lvRaces.MultiSelect = false;
       lvRaces.Name = "lvRaces";
@@ -41,6 +44,7 @@ namespace Carma2Forge {
       lvRaces.TabIndex = 1;
       lvRaces.UseCompatibleStateImageBehavior = false;
       lvRaces.View = View.Details;
+      lvRaces.SelectedIndexChanged += lvRaces_SelectedIndexChanged;
       // 
       // columnHeader1
       // 
@@ -52,15 +56,26 @@ namespace Carma2Forge {
       colorDialog1.AnyColor = true;
       colorDialog1.FullOpen = true;
       // 
+      // pictureBox1
+      // 
+      pictureBox1.Location = new Point(323, 12);
+      pictureBox1.Name = "pictureBox1";
+      pictureBox1.Size = new Size(565, 426);
+      pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+      pictureBox1.TabIndex = 2;
+      pictureBox1.TabStop = false;
+      // 
       // RaceEditor
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
       AutoScaleMode = AutoScaleMode.Font;
       ClientSize = new Size(1140, 450);
+      Controls.Add(pictureBox1);
       Controls.Add(lvRaces);
       Name = "RaceEditor";
       Text = "Race Editor";
       Load += RaceEditor_Load;
+      ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
       ResumeLayout(false);
     }
 
@@ -73,5 +88,6 @@ namespace Carma2Forge {
     private FontFrontEnd.ColorEditor ceTopRight;
     private FontFrontEnd.ColorEditor ceBottomLeft;
     private FontFrontEnd.ColorEditor ceBottomRight;
+    private PictureBox pictureBox1;
   }
 }
