@@ -17,7 +17,7 @@ namespace Carma2ForgeLib.Modules.TwtModule {
 
     public TwtFileEntry GetFile(string filename) {
       foreach (TwtFileEntry entry in entries) {
-        if (entry.filename == filename) {
+        if (entry.filename.ToLower() == filename.ToLower()) {
           return entry;
         }
       }

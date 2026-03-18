@@ -17,8 +17,11 @@ namespace Carma2Forge {
     private RaceModule raceModule = new RaceModule();
     private TwtModule twtModule = new TwtModule();
     private PixiesModule pixiesModule = new PixiesModule();
+    private Carma2ForgeConfig config;
 
     public RaceEditor(Carma2ForgeConfig config) {
+      this.config = config;
+
       raceModule.Initialize(config);
       twtModule.Initialize(config);
       pixiesModule.Initialize(config);
@@ -79,6 +82,15 @@ namespace Carma2Forge {
           break;
         }
       }
+    }
+
+    private void btnEditMap_Click(object sender, EventArgs e) {
+      RaceEntry selectedRaceEntry = (RaceEntry)lvRaces.SelectedItems[0].Tag;
+      if (selectedRaceEntry == null) {
+        return;
+      }
+
+      new MapEditor(this.config, selectedRaceEntry.fileName).Show();
     }
   }
 }

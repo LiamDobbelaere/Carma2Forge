@@ -28,6 +28,7 @@ namespace Carma2Forge {
       columnHeader1 = new ColumnHeader();
       colorDialog1 = new ColorDialog();
       pictureBox1 = new PictureBox();
+      btnEditMap = new Button();
       ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
       SuspendLayout();
       // 
@@ -65,11 +66,22 @@ namespace Carma2Forge {
       pictureBox1.TabIndex = 2;
       pictureBox1.TabStop = false;
       // 
+      // btnEditMap
+      // 
+      btnEditMap.Location = new Point(894, 415);
+      btnEditMap.Name = "btnEditMap";
+      btnEditMap.Size = new Size(75, 23);
+      btnEditMap.TabIndex = 3;
+      btnEditMap.Text = "Edit Map";
+      btnEditMap.UseVisualStyleBackColor = true;
+      btnEditMap.Click += btnEditMap_Click;
+      // 
       // RaceEditor
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
       AutoScaleMode = AutoScaleMode.Font;
       ClientSize = new Size(1140, 450);
+      Controls.Add(btnEditMap);
       Controls.Add(pictureBox1);
       Controls.Add(lvRaces);
       Name = "RaceEditor";
@@ -89,5 +101,6 @@ namespace Carma2Forge {
     private FontFrontEnd.ColorEditor ceBottomLeft;
     private FontFrontEnd.ColorEditor ceBottomRight;
     private PictureBox pictureBox1;
+    private Button btnEditMap;
   }
 }

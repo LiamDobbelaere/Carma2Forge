@@ -17,6 +17,8 @@ namespace Carma2Forge {
         Carma2Path = Properties.Settings.Default.Carma2Path,
         DataPath = "data"
       };
+
+      new MapEditor(config, "newcity1").Show();
     }
 
     private bool HasCarma2PathConfigured() {
