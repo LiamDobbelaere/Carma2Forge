@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
@@ -122,13 +123,162 @@ namespace Carma2ForgeLib.Modules.MapModule{
     public int opacity;
     public required string framePixName;
   }
-  
+
+  public class MapPed {
+    public required string materialName;
+    public int movementIndex;
+    public int groupIndex;
+    public int pedsPer100Sqm;
+    public required MapPedExclusionMaterial[] exclusionMaterials;
+  }
+
+  public class MapPedExclusionMaterial {
+    public int flags;
+    public required string materialName;
+  }
+
+  public class MapPedExceptionMaterial {
+    // TODO, it'll probably crash at some point and I'll have to fix it then :')
+  }
+
+  public class MapHorizon {
+    public required string skyTextureName;
+    public int horizontalRepetitions;
+    public int verticalSizeDegrees;
+    public int horizonPositionBelowTop; // in pixels
+    public required string depthCueMode; // none, dark, fog, colour
+    public int fogAmount;
+    public int darknessAmount;
+    public Color depthCueColor;
+  }
+
+  public class MapSpecialEffectVolume {
+    public required string type; // DEFAULT or BOX
+    public Vector3 p1; // ? maybe part of a transformation matrix, not sure
+    public Vector3 p2;
+    public Vector3 p3;
+    public Vector3 p4;
+    public float gravityMultiplier;
+    public float viscosityMultiplier;
+    public float carDamagePerMs;
+    public float pedDamagePerMs;
+    public int cameraEffectIndex;
+    public int skyColor;
+    public required string windscreenTexture;
+    public int entrySoundId;
+    public int exitSoundId;
+    public int engineNoiseIndex;
+    public int materialIndex;
+    public required string soundType; // none or SCATTERED
+    public required string scatterMode; // RANDOM
+    public float minVolume;
+    public float maxVolume;
+    public int count; // 15, TODO: not sure what this is
+    public required int[] scatterSounds;
+  }
+
+  public class MapSoundGenerator {
+    // TODO?
+  }
+
+  public class MapReflectiveWindscreenSpecs {
+    public required string defaultScreenMaterial;
+    public required string darknessScreenMaterial;
+    public required string fogScreenMaterial;
+    public int areasWithDifferentScreens; // (ignore)
+  }
+
+  public class MapMinimap {
+    public required string mapPixelmapName;
+    public Vector3 worldMapTransformationX;
+    public Vector3 worldMapTransformationY;
+    public Vector3 worldMapTransformationZ;
+    public Vector3 worldMapTransformationW;
+  }
+
+  public class MapFunk {
+    // TODO
+  }
+
+  public class MapGroove {
+    // TODO
+  }
+
+  public class MapOpponentPathSection {
+    public int from;
+    public int to;
+    public int unknown1; // 0
+    public int unknown2; // 255
+    public int unknown3; // 0
+    public int unknown4; // 255
+    public float unknown5; // 1.0 - speed?
+    public bool unknown6; // idk - TODO
+  }
+
+  public class MapOpponentPaths {
+    public required Vector3[] nodes;
+    public required MapOpponentPathSection[] sections;
+    public int copStartPoints;
+  }
+
+  public class MapDronePaths {
+    public int version;
+    public required MapDronePath[] paths;
+  }
+
+  public class MapDronePath {
+    public Vector3 position;
+    public required string droneName;
+    public int unknown1; // 0
+    public required Vector4[] unknown2;
+  }
+
+  public class MapMaterialModifier {
+    public float carWallFriction;
+    public float tireWallFriction;
+    public float downForce;
+    public float bumpiness;
+    public int tireSoundIndex;
+    public int crashSoundIndex;
+    public int scrapeSoundIndex;
+    public float sparkiness;
+    public int roomForExpansion;
+    public required string skidmarkMaterial; // can be 'none'
+  }
+
+  public class MapDustShadeTable {
+    public Color rgb;
+    public Vector3 strength;
+  }
+
+  public class MapNetworkStartPoint {
+    public Vector3 position;
+    public int rotationDegrees;
+  }
+
   public class MapFile {
-    private MapLighting lighting;
-    private MapStartingGrid startingGrid;
-    private MapCheckpoint[] checkpoints;
-    private MapSmashable[] smashables;
-    // ped specs was next
+    public required MapLighting lighting;
+    public required MapStartingGrid startingGrid;
+    public required MapCheckpoint[] checkpoints;
+    public required MapSmashable[] smashables;
+    public required MapPed[] peds;
+    public required string additionalActor;
+    public required MapHorizon horizon;
+    public int defaultEngineNoise;
+    public required MapSpecialEffectVolume[] specialEffectsVolumes;
+    public required MapSoundGenerator[] soundGenerators;
+    public required MapReflectiveWindscreenSpecs reflectiveWindscreenSpecs;
+    public required MapMinimap minimap;
+    public required MapFunk[] funks;
+    public required MapGroove[] grooves;
+    public required MapOpponentPaths opponentPaths;
+    public required MapDronePaths dronePaths;
+    public required MapMaterialModifier[] materialModifiers;
+    public required string[] nonCarObjects;
+    public required MapDustShadeTable[] dustShadeTables;
+    public required MapNetworkStartPoint[] networkStartPoints;
+    public required string[] splashFiles;
+    public required string[] mapTxtReferences;
   }
 
   public enum MapBlockType {
