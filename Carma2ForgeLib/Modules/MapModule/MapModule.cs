@@ -267,14 +267,14 @@ namespace Carma2ForgeLib.Modules.MapModule {
   }
 
   public class MapReflectiveWindscreenSpecs {
-    public required string defaultScreenMaterial;
-    public required string darknessScreenMaterial;
-    public required string fogScreenMaterial;
+    public string defaultScreenMaterial;
+    public string darknessScreenMaterial;
+    public string fogScreenMaterial;
     public int areasWithDifferentScreens; // (ignore)
   }
 
   public class MapMinimap {
-    public required string mapPixelmapName;
+    public string mapPixelmapName;
     public Vector3 worldMapTransformationX;
     public Vector3 worldMapTransformationY;
     public Vector3 worldMapTransformationZ;
@@ -301,21 +301,21 @@ namespace Carma2ForgeLib.Modules.MapModule {
   }
 
   public class MapOpponentPaths {
-    public required Vector3[] nodes;
-    public required MapOpponentPathSection[] sections;
+    public Vector3[] nodes;
+    public MapOpponentPathSection[] sections;
     public int copStartPoints;
   }
 
   public class MapDronePaths {
     public int version;
-    public required MapDronePath[] paths;
+    public MapDronePath[] paths;
   }
 
   public class MapDronePath {
     public Vector3 position;
-    public required string droneName;
+    public string droneName;
     public int unknown1; // 0
-    public required Vector4[] unknown2;
+    public Vector4[] unknown2;
   }
 
   public class MapMaterialModifier {
@@ -328,7 +328,7 @@ namespace Carma2ForgeLib.Modules.MapModule {
     public int scrapeSoundIndex;
     public float sparkiness;
     public int roomForExpansion;
-    public required string skidmarkMaterial; // can be 'none'
+    public string skidmarkMaterial; // can be 'none'
   }
 
   public class MapDustShadeTable {
@@ -399,7 +399,7 @@ namespace Carma2ForgeLib.Modules.MapModule {
       this.config = config;
     }
 
-    public void LoadMapFile(TwtFileEntry entry) {
+    public MapFile LoadMapFile(TwtFileEntry entry) {
       using TxtEnumerator mapTxtLines = new TxtEnumerator(config.ReadTxt(entry));
 
       MapBlockType currentBlock = MapBlockType.Version;
@@ -610,10 +610,173 @@ namespace Carma2ForgeLib.Modules.MapModule {
               mapFile.specialEffectsVolumes[i] = volume;
             }
             break;
+          case MapBlockType.SoundGenerators:
+            int soundGeneratorCount = mapTxtLines.AsInt();
+            break;
+          case MapBlockType.ReflectiveWindscreenSpecs:
+            MapReflectiveWindscreenSpecs specs = new MapReflectiveWindscreenSpecs();
+            specs.defaultScreenMaterial = mapTxtLines.AsString();
+            specs.darknessScreenMaterial = mapTxtLines.Next();
+            specs.fogScreenMaterial = mapTxtLines.Next();
+            specs.areasWithDifferentScreens = mapTxtLines.NextInt();
+            break;
+          case MapBlockType.Minimap:
+            MapMinimap minimap = new MapMinimap();
+            minimap.mapPixelmapName = mapTxtLines.AsString();
+            minimap.worldMapTransformationX = mapTxtLines.NextVector3();
+            minimap.worldMapTransformationY = mapTxtLines.NextVector3();
+            minimap.worldMapTransformationZ = mapTxtLines.NextVector3();
+            minimap.worldMapTransformationW = mapTxtLines.NextVector3();
+            break;
+          case MapBlockType.Funks:
+            if (mapTxtLines.AsString() != "START OF FUNK") {
+              throw new Exception("Expected START OF FUNK");
+            }
+
+            string currentLine = mapTxtLines.Next();
+            while (currentLine != "END OF FUNK") {
+              currentLine = mapTxtLines.Next();
+            }
+
+            break;
+          case MapBlockType.Grooves:
+            if (mapTxtLines.AsString() != "START OF GROOVE") {
+              throw new Exception("Expected START OF GROOVE");
+            }
+            currentLine = mapTxtLines.Next();
+            while (currentLine != "END OF GROOVE") {
+              currentLine = mapTxtLines.Next();
+            }
+            break;
+          case MapBlockType.OpponentPaths:
+            mapFile.opponentPaths = new MapOpponentPaths();
+
+            if (mapTxtLines.AsString() != "START OF OPPONENT PATHS") {
+              throw new Exception("Expected START OF OPPONENT PATHS");
+            }
+
+            int pathNodesCount = mapTxtLines.NextInt();
+            mapFile.opponentPaths.nodes = new Vector3[pathNodesCount];
+            for (int i = 0; i < pathNodesCount; i++) {
+              mapFile.opponentPaths.nodes[i] = mapTxtLines.NextVector3();
+            }
+
+            int pathSectionCount = mapTxtLines.NextInt();
+            mapFile.opponentPaths.sections = new MapOpponentPathSection[pathSectionCount];
+            for (int i = 0; i < pathSectionCount; i++) {
+              MapOpponentPathSection section = new MapOpponentPathSection();
+              float[] values = mapTxtLines.NextFloatArray();
+
+              section.from = (int)values[0];
+              section.to = (int)values[1];
+              section.unknown1 = (int)values[2];
+              section.unknown2 = (int)values[3];
+              section.unknown3 = (int)values[4];
+              section.unknown4 = (int)values[5];
+              section.unknown5 = values[6];
+              section.unknown6 = values[7] != 0;
+
+              mapFile.opponentPaths.sections[i] = section;
+            }
+
+            mapFile.opponentPaths.copStartPoints = mapTxtLines.NextInt();
+
+            if (mapTxtLines.Next() != "END OF OPPONENT PATHS") {
+              throw new Exception("Expected END OF OPPONENT PATHS");
+            }
+            break;
+          case MapBlockType.DronePaths:
+            mapFile.dronePaths = new MapDronePaths();
+
+            if (mapTxtLines.AsString() != "START OF DRONE PATHS") {
+              throw new Exception("Expected START OF DRONE PATHS");
+            }
+
+            mapFile.dronePaths.version = mapTxtLines.NextInt();
+
+            int dronePathCount = mapTxtLines.NextInt();
+            mapFile.dronePaths.paths = new MapDronePath[dronePathCount];
+            for (int i = 0; i < dronePathCount; i++) {
+              MapDronePath path = new MapDronePath();
+              path.position = mapTxtLines.NextVector3();
+              path.droneName = mapTxtLines.Next();
+              path.unknown1 = mapTxtLines.NextInt();
+              int unknown2Count = mapTxtLines.NextInt();
+              path.unknown2 = new Vector4[unknown2Count];
+              for (int j = 0; j < unknown2Count; j++) {
+                path.unknown2[j] = mapTxtLines.NextVector4();
+              }
+              mapFile.dronePaths.paths[i] = path;
+            }
+            if (mapTxtLines.Next() != "END OF DRONE PATHS") {
+              throw new Exception("Expected END OF DRONE PATHS");
+            }
+            break;
+          case MapBlockType.MaterialModifiers:
+            int materialModifierCount = mapTxtLines.AsInt();
+            mapFile.materialModifiers = new MapMaterialModifier[materialModifierCount];
+            for (int i = 0; i < materialModifierCount; i++) {
+              MapMaterialModifier modifier = new MapMaterialModifier();
+              modifier.carWallFriction = mapTxtLines.NextFloat();
+              modifier.tireWallFriction = mapTxtLines.NextFloat();
+              modifier.downForce = mapTxtLines.NextFloat();
+              modifier.bumpiness = mapTxtLines.NextFloat();
+              modifier.tireSoundIndex = mapTxtLines.NextInt();
+              modifier.crashSoundIndex = mapTxtLines.NextInt();
+              modifier.scrapeSoundIndex = mapTxtLines.NextInt();
+              modifier.sparkiness = mapTxtLines.NextFloat();
+              modifier.roomForExpansion = mapTxtLines.NextInt();
+              modifier.skidmarkMaterial = mapTxtLines.Next();
+              mapFile.materialModifiers[i] = modifier;
+            }
+            break;
+          case MapBlockType.NonCarObjects:
+            int nonCarObjectCount = mapTxtLines.AsInt();
+            mapFile.nonCarObjects = new string[nonCarObjectCount];
+            for (int i = 0; i < nonCarObjectCount; i++) {
+              mapFile.nonCarObjects[i] = mapTxtLines.Next();
+            }
+            break;
+          case MapBlockType.DustShadeTables:
+            int dustShadeTableCount = mapTxtLines.AsInt();
+            mapFile.dustShadeTables = new MapDustShadeTable[dustShadeTableCount];
+            for (int i = 0; i < dustShadeTableCount; i++) {
+              MapDustShadeTable table = new MapDustShadeTable();
+              table.rgb = mapTxtLines.NextColorRGB();
+              table.strength = mapTxtLines.NextVector3();
+              mapFile.dustShadeTables[i] = table;
+            }
+            break;
+          case MapBlockType.NetworkStartPoints:
+            int networkStartPointCount = mapTxtLines.AsInt();
+            mapFile.networkStartPoints = new MapNetworkStartPoint[networkStartPointCount];
+            for (int i = 0; i < networkStartPointCount; i++) {
+              MapNetworkStartPoint startPoint = new MapNetworkStartPoint();
+              startPoint.position = mapTxtLines.NextVector3();
+              startPoint.rotationDegrees = mapTxtLines.NextInt();
+              mapFile.networkStartPoints[i] = startPoint;
+            }
+            break;
+          case MapBlockType.SplashFiles:
+            int splashFileCount = mapTxtLines.AsInt();
+            mapFile.splashFiles = new string[splashFileCount];
+            for (int i = 0; i < splashFileCount; i++) {
+              mapFile.splashFiles[i] = mapTxtLines.Next();
+            }
+            break;
+          case MapBlockType.SelfReference:
+            int mapTxtReferenceCount = mapTxtLines.AsInt();
+            mapFile.mapTxtReferences = new string[mapTxtReferenceCount];
+            for (int i = 0; i < mapTxtReferenceCount; i++) {
+              mapFile.mapTxtReferences[i] = mapTxtLines.Next();
+            }
+            break;
         }
 
         currentBlock++;
       }
+
+      return mapFile;
     }
 
     private MapSmashableExplosion LoadExplosion(TxtEnumerator mapTxtLines) {
