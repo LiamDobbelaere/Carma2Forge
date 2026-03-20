@@ -213,8 +213,8 @@ namespace Carma2ForgeLib.Modules.MapModule {
     public required string materialName;
     public int movementIndex;
     public int groupIndex;
-    public int pedsPer100Sqm;
-    public required MapPedExclusionMaterial[] exclusionMaterials;
+    public float pedsPer100Sqm;
+    public MapPedExclusionMaterial[] exclusionMaterials;
   }
 
   public class MapPedExclusionMaterial {
@@ -238,7 +238,7 @@ namespace Carma2ForgeLib.Modules.MapModule {
   }
 
   public class MapSpecialEffectVolume {
-    public required string type; // DEFAULT or BOX
+    public string type; // DEFAULT or BOX
     public Vector3 p1; // ? maybe part of a transformation matrix, not sure
     public Vector3 p2;
     public Vector3 p3;
@@ -249,17 +249,17 @@ namespace Carma2ForgeLib.Modules.MapModule {
     public float pedDamagePerMs;
     public int cameraEffectIndex;
     public int skyColor;
-    public required string windscreenTexture;
+    public string windscreenTexture;
     public int entrySoundId;
     public int exitSoundId;
     public int engineNoiseIndex;
     public int materialIndex;
-    public required string soundType; // none or SCATTERED
-    public required string scatterMode; // RANDOM
+    public string soundType; // none or SCATTERED
+    public string scatterMode; // RANDOM
     public float minVolume;
     public float maxVolume;
     public int count; // 15, TODO: not sure what this is
-    public required int[] scatterSounds;
+    public int[] scatterSounds;
   }
 
   public class MapSoundGenerator {
@@ -375,6 +375,7 @@ namespace Carma2ForgeLib.Modules.MapModule {
     Peds,
     AdditionalActor,
     Horizon,
+    DefaultEngineNoise,
     SpecialEffectsVolumes,
     SoundGenerators,
     ReflectiveWindscreenSpecs,
@@ -513,6 +514,100 @@ namespace Carma2ForgeLib.Modules.MapModule {
               mapSmashable.reserved4 = mapTxtLines.NextInt();
 
               mapFile.smashables[i] = mapSmashable;
+            }
+            break;
+          case MapBlockType.Peds:
+            int pedCount = mapTxtLines.AsInt();
+            mapFile.peds = new MapPed[pedCount];
+
+            for (int i = 0; i < pedCount; i++) {
+              mapFile.peds[i] = new MapPed {
+                materialName = mapTxtLines.Next(),
+                movementIndex = mapTxtLines.NextInt(),
+                groupIndex = mapTxtLines.NextInt(),
+                pedsPer100Sqm = mapTxtLines.NextFloat(),
+              };
+
+              int exclusionMaterialCount = mapTxtLines.NextInt();
+              mapFile.peds[i].exclusionMaterials = new MapPedExclusionMaterial[exclusionMaterialCount];
+              for (int j = 0; j < exclusionMaterialCount; j++) {
+                mapFile.peds[i].exclusionMaterials[j] = new MapPedExclusionMaterial {
+                  flags = mapTxtLines.NextInt(),
+                  materialName = mapTxtLines.Next()
+                };
+              }
+
+              // TODO: missing exception materials
+              int exceptionMaterialCount = mapTxtLines.NextInt();
+            }
+            break;
+          case MapBlockType.AdditionalActor:
+            mapFile.additionalActor = mapTxtLines.AsString();
+            break;
+          case MapBlockType.Horizon:
+            mapFile.horizon = new MapHorizon {
+              skyTextureName = mapTxtLines.AsString(),
+              horizontalRepetitions = mapTxtLines.NextInt(),
+              verticalSizeDegrees = mapTxtLines.NextInt(),
+              horizonPositionBelowTop = mapTxtLines.NextInt(),
+              depthCueMode = mapTxtLines.Next(),
+            };
+
+            float[] fogDarkness = mapTxtLines.NextFloatArray();
+            mapFile.horizon.fogAmount = (int)fogDarkness[0];
+            mapFile.horizon.darknessAmount = (int)fogDarkness[1];
+
+            mapFile.horizon.depthCueColor = mapTxtLines.NextColorRGB();
+            break;
+          case MapBlockType.DefaultEngineNoise:
+            mapFile.defaultEngineNoise = mapTxtLines.AsInt();
+            break;
+          case MapBlockType.SpecialEffectsVolumes:
+            int specialEffectVolumeCount = mapTxtLines.AsInt();
+            mapFile.specialEffectsVolumes = new MapSpecialEffectVolume[specialEffectVolumeCount];
+
+            for (int i = 0; i < specialEffectVolumeCount; i++) {
+              MapSpecialEffectVolume volume = new MapSpecialEffectVolume();
+              volume.type = mapTxtLines.Next();
+              if (volume.type == "BOX") {
+                volume.p1 = mapTxtLines.NextVector3();
+                volume.p2 = mapTxtLines.NextVector3();
+                volume.p3 = mapTxtLines.NextVector3();
+                volume.p4 = mapTxtLines.NextVector3();
+              }
+
+              volume.gravityMultiplier = mapTxtLines.NextFloat();
+              volume.viscosityMultiplier = mapTxtLines.NextFloat();
+              volume.carDamagePerMs = mapTxtLines.NextFloat();
+              volume.pedDamagePerMs = mapTxtLines.NextFloat();
+              volume.cameraEffectIndex = mapTxtLines.NextInt();
+              volume.skyColor = mapTxtLines.NextInt();
+              volume.windscreenTexture = mapTxtLines.Next();
+              volume.entrySoundId = mapTxtLines.NextInt();
+              volume.exitSoundId = mapTxtLines.NextInt();
+              volume.engineNoiseIndex = mapTxtLines.NextInt();
+              volume.materialIndex = mapTxtLines.NextInt();
+
+              if (volume.type != "DEFAULT") {
+                volume.soundType = mapTxtLines.Next();
+                if (volume.soundType == "SCATTERED") {
+                  volume.scatterMode = mapTxtLines.Next();
+
+                  float[] minMaxVolume = mapTxtLines.NextFloatArray();
+                  volume.minVolume = minMaxVolume[0];
+                  volume.maxVolume = minMaxVolume[1];
+
+                  volume.count = mapTxtLines.NextInt();
+
+                  int scatterSoundCount = mapTxtLines.NextInt();
+                  volume.scatterSounds = new int[scatterSoundCount];
+                  for (int j = 0; j < scatterSoundCount; j++) {
+                    volume.scatterSounds[j] = mapTxtLines.NextInt();
+                  }
+                }
+              }
+
+              mapFile.specialEffectsVolumes[i] = volume;
             }
             break;
         }

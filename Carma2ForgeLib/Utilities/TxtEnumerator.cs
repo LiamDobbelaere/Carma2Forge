@@ -175,6 +175,10 @@ namespace Carma2ForgeLib.Utilities {
       return int.Parse(nextLine);
     }
 
+    public string AsString() {
+      return source.Current;
+    }
+
     public float NextFloat() {
       Next();
       return AsFloat();
