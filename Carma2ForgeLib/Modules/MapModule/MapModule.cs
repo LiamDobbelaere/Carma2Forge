@@ -28,6 +28,16 @@ namespace Carma2ForgeLib.Modules.MapModule {
     public Vector3 p2;
     public Vector3 p3;
     public Vector3 p4;
+
+    public Vector3 Center {
+      get {
+        return new Vector3(
+          (p1.X + p2.X + p3.X + p4.X) / 4,
+          (p1.Y + p2.Y + p3.Y + p4.Y) / 4,
+          (p1.Z + p2.Z + p3.Z + p4.Z) / 4
+        );
+      }
+    }
   }
 
   public class MapCheckpoint {
@@ -237,7 +247,7 @@ namespace Carma2ForgeLib.Modules.MapModule {
     public Color depthCueColor;
   }
 
-  public class MapSpecialEffectVolume {
+  public class MapSpecialEffectsVolume {
     public string type; // DEFAULT or BOX
     public Vector3 p1; // ? maybe part of a transformation matrix, not sure
     public Vector3 p2;
@@ -275,10 +285,26 @@ namespace Carma2ForgeLib.Modules.MapModule {
 
   public class MapMinimap {
     public string mapPixelmapName;
-    public Vector3 worldMapTransformationX;
-    public Vector3 worldMapTransformationY;
-    public Vector3 worldMapTransformationZ;
-    public Vector3 worldMapTransformationW;
+    public Vector3 worldMapTransformationRow0;
+    public Vector3 worldMapTransformationRow1;
+    public Vector3 worldMapTransformationRow2;
+    public Vector3 worldMapTransformationOffset;
+
+    public Vector2 WorldToMap(Vector3 p) {
+      float mapX =
+          worldMapTransformationRow0.X * p.X +
+          worldMapTransformationRow1.X * p.Y +
+          worldMapTransformationRow2.X * p.Z +
+          worldMapTransformationOffset.X;
+
+      float mapY =
+          worldMapTransformationRow0.Y * p.X +
+          worldMapTransformationRow1.Y * p.Y +
+          worldMapTransformationRow2.Y * p.Z +
+          worldMapTransformationOffset.Y;
+
+      return new Vector2(mapX, mapY);
+    }
   }
 
   public class MapFunk {
@@ -350,7 +376,7 @@ namespace Carma2ForgeLib.Modules.MapModule {
     public string additionalActor;
     public MapHorizon horizon;
     public int defaultEngineNoise;
-    public MapSpecialEffectVolume[] specialEffectsVolumes;
+    public MapSpecialEffectsVolume[] specialEffectsVolumes;
     public MapSoundGenerator[] soundGenerators;
     public MapReflectiveWindscreenSpecs reflectiveWindscreenSpecs;
     public MapMinimap minimap;
@@ -422,9 +448,9 @@ namespace Carma2ForgeLib.Modules.MapModule {
             lighting.otherAmbientDiffuseLight = mapTxtLines.NextVector2();
             break;
           case MapBlockType.StartingGrid:
-            MapStartingGrid startingGrid = new MapStartingGrid();
-            startingGrid.gridPosition = mapTxtLines.AsVector3();
-            startingGrid.direction = mapTxtLines.NextInt();
+            mapFile.startingGrid = new MapStartingGrid();
+            mapFile.startingGrid.gridPosition = mapTxtLines.AsVector3();
+            mapFile.startingGrid.direction = mapTxtLines.NextInt();
             break;
           case MapBlockType.Checkpoints:
             int checkpointCount = mapTxtLines.AsInt();
@@ -564,10 +590,10 @@ namespace Carma2ForgeLib.Modules.MapModule {
             break;
           case MapBlockType.SpecialEffectsVolumes:
             int specialEffectVolumeCount = mapTxtLines.AsInt();
-            mapFile.specialEffectsVolumes = new MapSpecialEffectVolume[specialEffectVolumeCount];
+            mapFile.specialEffectsVolumes = new MapSpecialEffectsVolume[specialEffectVolumeCount];
 
             for (int i = 0; i < specialEffectVolumeCount; i++) {
-              MapSpecialEffectVolume volume = new MapSpecialEffectVolume();
+              MapSpecialEffectsVolume volume = new MapSpecialEffectsVolume();
               volume.type = mapTxtLines.Next();
               if (volume.type == "BOX") {
                 volume.p1 = mapTxtLines.NextVector3();
@@ -623,10 +649,10 @@ namespace Carma2ForgeLib.Modules.MapModule {
           case MapBlockType.Minimap:
             mapFile.minimap = new MapMinimap();
             mapFile.minimap.mapPixelmapName = mapTxtLines.AsString();
-            mapFile.minimap.worldMapTransformationX = mapTxtLines.NextVector3();
-            mapFile.minimap.worldMapTransformationY = mapTxtLines.NextVector3();
-            mapFile.minimap.worldMapTransformationZ = mapTxtLines.NextVector3();
-            mapFile.minimap.worldMapTransformationW = mapTxtLines.NextVector3();
+            mapFile.minimap.worldMapTransformationRow0 = mapTxtLines.NextVector3();
+            mapFile.minimap.worldMapTransformationRow1 = mapTxtLines.NextVector3();
+            mapFile.minimap.worldMapTransformationRow2 = mapTxtLines.NextVector3();
+            mapFile.minimap.worldMapTransformationOffset = mapTxtLines.NextVector3();
             break;
           case MapBlockType.Funks:
             if (mapTxtLines.AsString() != "START OF FUNK") {
