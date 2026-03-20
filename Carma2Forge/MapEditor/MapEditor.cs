@@ -1,15 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Carma2ForgeLib.Modules;
+﻿using Carma2ForgeLib.Modules;
 using Carma2ForgeLib.Modules.MapModule;
-using Carma2ForgeLib.Modules.RaceModule;
 using Carma2ForgeLib.Modules.TwtModule;
 
 namespace Carma2Forge {

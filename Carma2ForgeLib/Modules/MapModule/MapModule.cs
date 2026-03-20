@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Linq;
+﻿using System.Drawing;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
-using Carma2ForgeLib.Enums;
 using Carma2ForgeLib.Modules.TwtModule;
 using Carma2ForgeLib.Utilities;
 
-namespace Carma2ForgeLib.Modules.MapModule{
+namespace Carma2ForgeLib.Modules.MapModule {
   public enum SmokeColumnSmokiness {
     Fire,
     Black,
@@ -30,64 +23,44 @@ namespace Carma2ForgeLib.Modules.MapModule{
     public int direction;
   }
 
+  public class MapQuad {
+    public Vector3 p1;
+    public Vector3 p2;
+    public Vector3 p3;
+    public Vector3 p4;
+  }
+
   public class MapCheckpoint {
-    public required int[] pedTimerIncrements;
-    public int quadCount;
-    public required Vector3[] quadPoints;
+    public int[] pedTimerIncrements;
+    public MapQuad[] quads;
   }
 
-  public class MapSmashable {
-    public int flags;
-    public required string triggerModel;
-    public required string mode; // TODO: enum/constants, can be replacemodel, texturechange
-    public required string intactPixelmap;
-    public int numberOfLevels;
-    public float triggerThreshold; // texturechange only
-    public int textureChangeFlags; // texturechange only
-    public required string collisionTypeSolidEdge; // texturechange only, can be edges, solid, passthrough
-    public int removalThreshold;
-    public required int[] possibleSounds;
-    public required MapSmashableShrapnel[] shrapnel;
-    public int fireSmokeChance;
-    public int smokeColumnCount;
-    public SmokeColumnSmokiness minSmokiness;
-    public SmokeColumnSmokiness maxSmokiness;
-    public required string actorFile;
-    public required string[] separateActor;
-    public required string[] nonCarsSeparateActors;
-    public required MapSmashableExplosionGroup[] explosionGroups;
-    public required string slickMaterial;
-    public int activatedNonCarCuboids;
-    public int unknown1; // 1
-    public required int[] unknown2; // 1,3
-    public required string unknown3; // *.DAT
-    public required string unknown4; // relative
-    public required int[] unknown5; // -1,-1,-1
-    public required int[] unknown6; // 1,1,1
-    public required string unknown7; // away
-    public int unknown8; // -10
-    public int extensionsFlags;
-    public int roomTurnOnCode; 
-    public required string awardCode; // singleshot
-    public int unknown9; // 3000
-    public int unknown10; // 20
-    public int unknown11; // 0
-    public int unknown12; // 0
-    public int unknown13; // 0
-    public int runtimeVariableChanges;
-    public required string newModel;
-    public int fireChance;
-    public int unknown14; // 1
-    public required int[] unknown15; // 0,0
-    public required string[] pixelMaps; // ghostparts only
-    public int reserved1;
-    public int reserved2;
-    public int reserved3;
-    public int reserved4;
+  public class MapConnotations {
+    public int[] sounds;
+    public MapSmashableShrapnel[] shrapnel;
+    public MapSmashableExplosion[] explosions;
+    public string slickMaterial;
+    public MapSmashableNonCarCuboid[] nonCarCuboids;
+    public MapSmashableActivationCuboid[] activationCuboids;
+    public int extensionFlags;
+    public int roomTurnOnCode;
+    public string awardCode;
+    public int pointsAwarded;
+    public int timeAwarded;
+    public int hudIndex;
+    public int fancyHudIndex;
+    public string[] runtimeVariableChanges;
   }
 
-  public class MapSmashableShrapnel {
-    public required string shrapnelType; // noncars, ghostparts
+  public class MapSmashableCuboid {
+    public string cuboidCoordinateSystem;
+    public Vector2 delay;
+    public Vector3 min;
+    public Vector3 max;
+  }
+
+  public class MapSmashableNonCarCuboid : MapSmashableCuboid {
+    public int nonCarNumber;
     public float minSpeed;
     public float maxSpeed;
     public float impacteeVelocityFactor;
@@ -95,12 +68,124 @@ namespace Carma2ForgeLib.Modules.MapModule{
     public float maxRandomUpVelocity;
     public float maxRandomNormalVelocity;
     public float maxRandomSpinRate;
-    public required string initialPlacementMode;
+  }
+
+  public class MapSmashableActivationCuboid : MapSmashableCuboid {
+    public string name;
+    public string impactDirection;
+    public float impactStrength;
+  }
+
+  public class MapSmashableExplosion {
+    public int[] count;
+    public Vector2 startDelay;
+    public Vector3 offset;
+    public Vector2 xFactor;
+    public Vector2 yFactor;
+    public Vector2 zFactor;
+    public Vector2 framerate;
+    public Vector2 scalingFactor;
+    public string rotationMode;
+    public MapSmashableExplosionFrame[] frames;
+  }
+
+  public class MapSmashableExplosionFrame {
+    public int opacity;
+    public string pixelmap;
+  }
+
+  public class MapSmashableTextureLevel {
+    public float triggerThreshold;
+    public int flags;
+    public string collisionType;
+    public MapConnotations connotations;
+    public string[] pixelMaps;
+  }
+
+  public class MapSmashable {
+    public int flags;
+    public string triggerModel;
+    public int triggerFlags;
+    public string triggerMode; // TODO: enum/constants, can be replacemodel, texturechange
+    public string intactPixelmap;
+    public int numberOfTextureLevels;
+    public MapSmashableTextureLevel[] textureLevels;
+    public float triggerThreshold; // texturechange only
+    public MapConnotations connotations;
+    public int textureChangeFlags; // texturechange only
+    public string collisionTypeSolidEdge; // texturechange only, can be edges, solid, passthrough
+    public float removalThreshold;
+    public int[] possibleSounds;
+    public MapSmashableShrapnel[] shrapnel;
+    public int fireSmokeChance;
+    public int smokeColumnCount;
+    public SmokeColumnSmokiness minSmokiness;
+    public SmokeColumnSmokiness maxSmokiness;
+    public string actorFile;
+    public string[] separateActors;
+    public string[] nonCarsSeparateActors;
+    public MapSmashableExplosionGroup[] explosionGroups;
+    public string slickMaterial;
+    public int activatedNonCarCuboids;
+    public int unknown1; // 1
+    public int[] unknown2; // 1,3
+    public string unknown3; // *.DAT
+    public string unknown4; // relative
+    public int[] unknown5; // -1,-1,-1
+    public int[] unknown6; // 1,1,1
+    public string unknown7; // away
+    public int unknown8; // -10
+    public int extensionsFlags;
+    public int roomTurnOnCode;
+    public string awardCode; // singleshot
+    public int unknown9; // 3000
+    public int unknown10; // 20
+    public int unknown11; // 0
+    public int unknown12; // 0
+    public int runtimeVariableChanges;
+    public string newModel;
+    public int fireChance;
+    public int unknown13; // 1
+    public int[] unknown14; // 0,0
+    public string[] pixelMaps; // ghostparts only
+    public int reserved1;
+    public int reserved2;
+    public int reserved3;
+    public int reserved4;
+  }
+
+  public class MapSmashableShrapnel {
+    public string shrapnelType; // noncars, ghostparts
+    public float minSpeed;
+    public float maxSpeed;
+    public float impacteeVelocityFactor;
+    public float maxRandomVelocity;
+    public float maxRandomUpVelocity;
+    public float maxRandomNormalVelocity;
+    public float maxRandomSpinRate;
+    public string initialPlacementMode;
+    public float clumpoingRadius;
+    public string clumpingCenter;
     public float minNumber;
     public float maxNumber;
+    public Vector2 time;
+    public float cutLength;
+    public int flags;
+    public string materialName;
     public int count; // -1
     public int unknown1; // -1
-    public required string shrapnelActor; // ghostparts only
+    public string[] ghostPartActors;
+    public int fireChance;
+    public int smokeColumnCount;
+    public SmokeColumnSmokiness minSmokiness;
+    public SmokeColumnSmokiness maxSmokiness;
+    public string actor;
+    public MapSmashableShrapnelActor[] actors;
+  }
+
+  public class MapSmashableShrapnelActor {
+    public string name;
+    public string fileName;
   }
 
   public class MapSmashableExplosionGroup {
@@ -115,13 +200,13 @@ namespace Carma2ForgeLib.Modules.MapModule{
     public int maxFramerate;
     public int minScalingFactor;
     public int maxScalingFactor;
-    public required string rotateMode; // possibilities: randomRotate
-    public required MapSmashableExplosionGroupFrame[] frames;
+    public string rotateMode; // possibilities: randomRotate
+    public MapSmashableExplosionGroupFrame[] frames;
   }
 
   public class MapSmashableExplosionGroupFrame {
     public int opacity;
-    public required string framePixName;
+    public string framePixName;
   }
 
   public class MapPed {
@@ -257,28 +342,28 @@ namespace Carma2ForgeLib.Modules.MapModule{
   }
 
   public class MapFile {
-    public required MapLighting lighting;
-    public required MapStartingGrid startingGrid;
-    public required MapCheckpoint[] checkpoints;
-    public required MapSmashable[] smashables;
-    public required MapPed[] peds;
-    public required string additionalActor;
-    public required MapHorizon horizon;
+    public MapLighting lighting;
+    public MapStartingGrid startingGrid;
+    public MapCheckpoint[] checkpoints;
+    public MapSmashable[] smashables;
+    public MapPed[] peds;
+    public string additionalActor;
+    public MapHorizon horizon;
     public int defaultEngineNoise;
-    public required MapSpecialEffectVolume[] specialEffectsVolumes;
-    public required MapSoundGenerator[] soundGenerators;
-    public required MapReflectiveWindscreenSpecs reflectiveWindscreenSpecs;
-    public required MapMinimap minimap;
-    public required MapFunk[] funks;
-    public required MapGroove[] grooves;
-    public required MapOpponentPaths opponentPaths;
-    public required MapDronePaths dronePaths;
-    public required MapMaterialModifier[] materialModifiers;
-    public required string[] nonCarObjects;
-    public required MapDustShadeTable[] dustShadeTables;
-    public required MapNetworkStartPoint[] networkStartPoints;
-    public required string[] splashFiles;
-    public required string[] mapTxtReferences;
+    public MapSpecialEffectVolume[] specialEffectsVolumes;
+    public MapSoundGenerator[] soundGenerators;
+    public MapReflectiveWindscreenSpecs reflectiveWindscreenSpecs;
+    public MapMinimap minimap;
+    public MapFunk[] funks;
+    public MapGroove[] grooves;
+    public MapOpponentPaths opponentPaths;
+    public MapDronePaths dronePaths;
+    public MapMaterialModifier[] materialModifiers;
+    public string[] nonCarObjects;
+    public MapDustShadeTable[] dustShadeTables;
+    public MapNetworkStartPoint[] networkStartPoints;
+    public string[] splashFiles;
+    public string[] mapTxtReferences;
   }
 
   public enum MapBlockType {
@@ -316,11 +401,308 @@ namespace Carma2ForgeLib.Modules.MapModule{
     public void LoadMapFile(TwtFileEntry entry) {
       using TxtEnumerator mapTxtLines = new TxtEnumerator(config.ReadTxt(entry));
 
+      MapBlockType currentBlock = MapBlockType.Version;
+      MapFile mapFile = new MapFile();
+
       while (mapTxtLines.HasNext()) {
         string line = mapTxtLines.Next();
 
+        switch (currentBlock) {
+          case MapBlockType.Version:
+            if (line != "VERSION 1") {
+              throw new Exception($"Unsupported map file version: {line}");
+            }
+            break;
+          case MapBlockType.Lighting:
+            MapLighting lighting = new MapLighting();
+            lighting.mainDirectionalLight = mapTxtLines.AsColorRGB();
+            lighting.zeroAmbientDiffuseLight = mapTxtLines.NextVector2();
+            lighting.oneAmbientDiffuseLight = mapTxtLines.NextVector2();
+            lighting.otherAmbientDiffuseLight = mapTxtLines.NextVector2();
+            break;
+          case MapBlockType.StartingGrid:
+            MapStartingGrid startingGrid = new MapStartingGrid();
+            startingGrid.gridPosition = mapTxtLines.AsVector3();
+            startingGrid.direction = mapTxtLines.NextInt();
+            break;
+          case MapBlockType.Checkpoints:
+            int checkpointCount = mapTxtLines.AsInt();
+            mapFile.checkpoints = new MapCheckpoint[checkpointCount];
+            for (int i = 0; i < checkpointCount; i++) {
+              MapCheckpoint checkpoint = new MapCheckpoint();
 
+              checkpoint.pedTimerIncrements = mapTxtLines.NextIntArray();
+
+              int quadCount = mapTxtLines.NextInt();
+              checkpoint.quads = new MapQuad[quadCount];
+              for (int j = 0; j < quadCount; j++) {
+                MapQuad quad = new MapQuad();
+                quad.p1 = mapTxtLines.NextVector3();
+                quad.p2 = mapTxtLines.NextVector3();
+                quad.p3 = mapTxtLines.NextVector3();
+                quad.p4 = mapTxtLines.NextVector3();
+                checkpoint.quads[j] = quad;
+              }
+
+              mapFile.checkpoints[i] = checkpoint;
+            }
+            break;
+          case MapBlockType.Smashables:
+            int smashableCount = mapTxtLines.AsInt();
+            mapFile.smashables = new MapSmashable[smashableCount];
+
+            for (int i = 0; i < smashableCount; i++) {
+              MapSmashable mapSmashable = new MapSmashable();
+
+              mapSmashable.flags = mapTxtLines.NextInt();
+              mapSmashable.triggerModel = mapTxtLines.Next();
+              if (mapSmashable.triggerModel.Length == 3 && mapSmashable.triggerModel.StartsWith("&")) {
+                mapSmashable.triggerFlags = mapTxtLines.NextInt();
+              }
+
+              mapSmashable.triggerMode = mapTxtLines.Next();
+
+              switch (mapSmashable.triggerMode) {
+                case "nochange":
+                case "remove":
+                  mapSmashable.removalThreshold = mapTxtLines.NextFloat();
+                  mapSmashable.connotations = LoadConnotations(mapTxtLines);
+                  break;
+                case "replacemodel":
+                  mapSmashable.removalThreshold = mapTxtLines.NextFloat();
+                  mapSmashable.connotations = LoadConnotations(mapTxtLines);
+
+                  mapSmashable.newModel = mapTxtLines.Next();
+                  mapSmashable.fireChance = mapTxtLines.NextInt();
+
+                  if (mapSmashable.fireChance > 0) {
+                    mapSmashable.smokeColumnCount = mapTxtLines.NextInt();
+                    int[] smokinessLevels = mapTxtLines.NextIntArray();
+                    mapSmashable.minSmokiness = (SmokeColumnSmokiness)smokinessLevels[0];
+                    mapSmashable.maxSmokiness = (SmokeColumnSmokiness)smokinessLevels[1];
+                  }
+                  break;
+                case "texturechange":
+                  mapSmashable.intactPixelmap = mapTxtLines.Next();
+                  mapSmashable.numberOfTextureLevels = mapTxtLines.NextInt();
+                  mapSmashable.textureLevels = new MapSmashableTextureLevel[mapSmashable.numberOfTextureLevels];
+                  for (int j = 0; j < mapSmashable.numberOfTextureLevels; j++) {
+                    MapSmashableTextureLevel mapSmashableTextureLevel = new MapSmashableTextureLevel();
+                    mapSmashableTextureLevel.triggerThreshold = mapTxtLines.NextFloat();
+                    mapSmashableTextureLevel.flags = mapTxtLines.NextInt();
+                    mapSmashableTextureLevel.collisionType = mapTxtLines.Next();
+
+                    mapSmashableTextureLevel.connotations = LoadConnotations(mapTxtLines);
+
+                    int pixelmapCount = mapTxtLines.NextInt();
+                    mapSmashableTextureLevel.pixelMaps = new string[pixelmapCount];
+                    for (int k = 0; k < pixelmapCount; k++) {
+                      mapSmashableTextureLevel.pixelMaps[k] = mapTxtLines.Next();
+                    }
+
+                    mapSmashable.textureLevels[j] = mapSmashableTextureLevel;
+                  }
+                  break;
+                default:
+                  throw new NotImplementedException($"Unsupported trigger mode: {mapSmashable.triggerMode}");
+              }
+
+              mapSmashable.reserved1 = mapTxtLines.NextInt();
+              mapSmashable.reserved2 = mapTxtLines.NextInt();
+              mapSmashable.reserved3 = mapTxtLines.NextInt();
+              mapSmashable.reserved4 = mapTxtLines.NextInt();
+
+              mapFile.smashables[i] = mapSmashable;
+            }
+            break;
+        }
+
+        currentBlock++;
       }
+    }
+
+    private MapSmashableExplosion LoadExplosion(TxtEnumerator mapTxtLines) {
+      MapSmashableExplosion explosion = new MapSmashableExplosion();
+      explosion.count = mapTxtLines.NextIntArray();
+      explosion.startDelay = mapTxtLines.NextVector2();
+      explosion.offset = mapTxtLines.NextVector3();
+      explosion.xFactor = mapTxtLines.NextVector2();
+      explosion.yFactor = mapTxtLines.NextVector2();
+      explosion.zFactor = mapTxtLines.NextVector2();
+      explosion.framerate = mapTxtLines.NextVector2();
+      explosion.scalingFactor = mapTxtLines.NextVector2();
+      explosion.rotationMode = mapTxtLines.Next();
+
+      int frameCount = mapTxtLines.NextInt();
+      explosion.frames = new MapSmashableExplosionFrame[frameCount];
+      for (int i = 0; i < frameCount; i++) {
+        MapSmashableExplosionFrame frame = new MapSmashableExplosionFrame();
+        frame.opacity = mapTxtLines.NextInt();
+        frame.pixelmap = mapTxtLines.Next();
+        explosion.frames[i] = frame;
+      }
+
+      return explosion;
+    }
+
+    private MapSmashableNonCarCuboid LoadSmashableNonCarCuboid(TxtEnumerator mapTxtLines) {
+      MapSmashableNonCarCuboid cuboid = new MapSmashableNonCarCuboid();
+      cuboid.delay = mapTxtLines.NextVector2();
+      cuboid.cuboidCoordinateSystem = mapTxtLines.Next();
+      cuboid.nonCarNumber = mapTxtLines.NextInt();
+      cuboid.min = mapTxtLines.NextVector3();
+      cuboid.max = mapTxtLines.NextVector3();
+
+      int[] minMaxSpeed = mapTxtLines.NextIntArray();
+      cuboid.minSpeed = minMaxSpeed[0];
+      cuboid.maxSpeed = minMaxSpeed[1];
+
+      cuboid.impacteeVelocityFactor = mapTxtLines.NextFloat();
+      cuboid.maxRandomVelocity = mapTxtLines.NextFloat();
+      cuboid.maxRandomUpVelocity = mapTxtLines.NextFloat();
+      cuboid.maxRandomNormalVelocity = mapTxtLines.NextFloat();
+      cuboid.maxRandomSpinRate = mapTxtLines.NextFloat();
+      return cuboid;
+    }
+
+    private MapSmashableActivationCuboid LoadSmashableActivationCuboid(TxtEnumerator mapTxtLines) {
+      MapSmashableActivationCuboid cuboid = new MapSmashableActivationCuboid();
+      cuboid.delay = mapTxtLines.NextVector2();
+      cuboid.name = mapTxtLines.Next();
+      cuboid.cuboidCoordinateSystem = mapTxtLines.Next();
+      cuboid.min = mapTxtLines.NextVector3();
+      cuboid.max = mapTxtLines.NextVector3();
+      cuboid.impactDirection = mapTxtLines.Next();
+      cuboid.impactStrength = mapTxtLines.NextFloat();
+      return cuboid;
+    }
+
+    private MapConnotations LoadConnotations(TxtEnumerator mapTxtLines) {
+      MapConnotations connotations = new MapConnotations();
+      int soundCount = mapTxtLines.NextInt();
+      connotations.sounds = new int[soundCount];
+      for (int i = 0; i < soundCount; i++) {
+        connotations.sounds[i] = mapTxtLines.NextInt();
+      }
+
+      int shrapnelCount = mapTxtLines.NextInt();
+      connotations.shrapnel = new MapSmashableShrapnel[shrapnelCount];
+      for (int i = 0; i < shrapnelCount; i++) {
+        MapSmashableShrapnel shrapnel = new MapSmashableShrapnel();
+        shrapnel.shrapnelType = mapTxtLines.Next();
+
+        float[] minMaxSpeed = mapTxtLines.NextFloatArray();
+        shrapnel.minSpeed = minMaxSpeed[0];
+        shrapnel.maxSpeed = minMaxSpeed[1];
+
+        shrapnel.impacteeVelocityFactor = mapTxtLines.NextFloat();
+        shrapnel.maxRandomVelocity = mapTxtLines.NextFloat();
+        shrapnel.maxRandomUpVelocity = mapTxtLines.NextFloat();
+        shrapnel.maxRandomNormalVelocity = mapTxtLines.NextFloat();
+        shrapnel.maxRandomSpinRate = mapTxtLines.NextFloat();
+
+        if (shrapnel.shrapnelType != "shards") {
+          shrapnel.initialPlacementMode = mapTxtLines.Next();
+
+          if (shrapnel.initialPlacementMode == "sphereclumped") {
+            shrapnel.clumpoingRadius = mapTxtLines.NextFloat();
+            shrapnel.clumpingCenter = mapTxtLines.Next();
+          }
+        }
+
+        if (shrapnel.shrapnelType != "noncars") {
+          shrapnel.time = mapTxtLines.NextVector2();
+        }
+
+        if (shrapnel.shrapnelType == "shards") {
+          shrapnel.cutLength = mapTxtLines.NextFloat();
+          shrapnel.flags = mapTxtLines.NextInt();
+          shrapnel.materialName = mapTxtLines.Next();
+        } else if (shrapnel.shrapnelType == "ghostparts") {
+          int[] counts = mapTxtLines.NextIntArray();
+          shrapnel.minNumber = counts[0];
+          shrapnel.maxNumber = counts.Length == 2 ? counts[1] : counts[0];
+
+          int actorCount = mapTxtLines.NextInt();
+          List<string> ghostPartActors = new List<string>();
+          if (actorCount > 0) {
+            for (int j = 0; j < actorCount; j++) {
+              ghostPartActors.Add(mapTxtLines.Next());
+            }
+          } else {
+            ghostPartActors.Add(mapTxtLines.Next());
+          }
+
+          shrapnel.ghostPartActors = ghostPartActors.ToArray();
+        } else if (shrapnel.shrapnelType == "noncars") {
+          int[] count = mapTxtLines.NextIntArray();
+          shrapnel.minNumber = count[0];
+          shrapnel.maxNumber = count[1];
+          shrapnel.fireChance = mapTxtLines.NextInt();
+
+          if (shrapnel.fireChance > 0) {
+            shrapnel.smokeColumnCount = mapTxtLines.NextInt();
+            int[] smokinessLevels = mapTxtLines.NextIntArray();
+            shrapnel.minSmokiness = (SmokeColumnSmokiness)smokinessLevels[0];
+            shrapnel.maxSmokiness = (SmokeColumnSmokiness)smokinessLevels[1];
+          }
+
+          shrapnel.actor = mapTxtLines.Next();
+          int actorCount = mapTxtLines.NextInt();
+          shrapnel.actors = new MapSmashableShrapnelActor[actorCount];
+          for (int j = 0; j < actorCount; j++) {
+            MapSmashableShrapnelActor actor = new MapSmashableShrapnelActor();
+            actor.name = mapTxtLines.Next();
+            actor.fileName = mapTxtLines.Next();
+            shrapnel.actors[j] = actor;
+          }
+        } else {
+          shrapnel.minNumber = mapTxtLines.NextInt();
+          shrapnel.maxNumber = mapTxtLines.NextInt();
+          shrapnel.actor = mapTxtLines.Next();
+        }
+
+        connotations.shrapnel[i] = shrapnel;
+      }
+
+      int explosionCount = mapTxtLines.NextInt();
+      connotations.explosions = new MapSmashableExplosion[explosionCount];
+      for (int j = 0; j < explosionCount; j++) {
+        connotations.explosions[j] = LoadExplosion(mapTxtLines);
+      }
+
+      connotations.slickMaterial = mapTxtLines.Next();
+
+      int nonCarCuboidCount = mapTxtLines.NextInt();
+      connotations.nonCarCuboids = new MapSmashableNonCarCuboid[nonCarCuboidCount];
+      for (int i = 0; i < nonCarCuboidCount; i++) {
+        connotations.nonCarCuboids[i] = LoadSmashableNonCarCuboid(mapTxtLines);
+      }
+
+      int activationCuboidCount = mapTxtLines.NextInt();
+      connotations.activationCuboids = new MapSmashableActivationCuboid[activationCuboidCount];
+      for (int i = 0; i < activationCuboidCount; i++) {
+        connotations.activationCuboids[i] = LoadSmashableActivationCuboid(mapTxtLines);
+      }
+
+      connotations.extensionFlags = mapTxtLines.NextInt();
+      connotations.roomTurnOnCode = mapTxtLines.NextInt();
+      connotations.awardCode = mapTxtLines.Next();
+
+      if (connotations.awardCode != "none") {
+        connotations.pointsAwarded = mapTxtLines.NextInt();
+        connotations.timeAwarded = mapTxtLines.NextInt();
+        connotations.hudIndex = mapTxtLines.NextInt();
+        connotations.fancyHudIndex = mapTxtLines.NextInt();
+      }
+
+      int runtimeVariableChangeCount = mapTxtLines.NextInt();
+      connotations.runtimeVariableChanges = new string[runtimeVariableChangeCount];
+      for (int i = 0; i < runtimeVariableChangeCount; i++) {
+        connotations.runtimeVariableChanges[i] = mapTxtLines.Next();
+      }
+
+      return connotations;
     }
 
     public void SaveRacesFile() {

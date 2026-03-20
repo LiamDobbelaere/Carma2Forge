@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Carma2ForgeLib.Modules;
+﻿using Carma2ForgeLib.Modules;
 using Carma2ForgeLib.Modules.OpponentModule;
 using Carma2ForgeLib.Modules.PixiesModule;
 using Carma2ForgeLib.Modules.TwtModule;
@@ -96,7 +86,7 @@ namespace Carma2Forge {
       try {
         twtFile = twtModule.LoadTwt(selectedOpponent.CarImagePath);
         pf = pixiesModule.ReadPixies(twtFile.GetFile("PIXIES.P16"));
-      } catch (Exception ex) {
+      } catch (Exception) {
         pbxCar.Image = null;
         pbxDriver.Image = null;
         return;

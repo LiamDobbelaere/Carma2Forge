@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Carma2ForgeLib.Enums;
+﻿using System.Text;
 using Carma2ForgeLib.Modules.TwtModule;
 
 namespace Carma2ForgeLib.Modules {
@@ -13,12 +8,12 @@ namespace Carma2ForgeLib.Modules {
 
     public IEnumerable<string> ReadTxt(TwtFileEntry entry) {
       IEnumerable<string> fileLinesEnumerable = Encoding.UTF8.GetString(entry.data).Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
-      
+
       return ReadTxt(fileLinesEnumerable);
     }
 
     public IEnumerable<string> ReadTxt(string relativePath) {
-      IEnumerable <string> fileLinesEnumerable = File.ReadLines(Path.Combine(Carma2Path, DataPath, relativePath));
+      IEnumerable<string> fileLinesEnumerable = File.ReadLines(Path.Combine(Carma2Path, DataPath, relativePath));
 
       return ReadTxt(fileLinesEnumerable);
     }

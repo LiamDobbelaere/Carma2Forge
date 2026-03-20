@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Globalization;
 using Carma2ForgeLib.Enums;
 
 namespace Carma2ForgeLib.Modules.RaceModule {
@@ -107,18 +102,18 @@ namespace Carma2ForgeLib.Modules.RaceModule {
 
             racesTxtLines.MoveNext();
             string[] splitLine = racesTxtLines.Current.Split(',');
-            racesFile.firstRaceDefaults.opponentSoftness = float.Parse(splitLine[0]);
+            racesFile.firstRaceDefaults.opponentSoftness = float.Parse(splitLine[0], CultureInfo.InvariantCulture);
             racesFile.firstRaceDefaults.opponentMaxRank = int.Parse(splitLine[1]);
 
             racesTxtLines.MoveNext();
             splitLine = racesTxtLines.Current.Split(',');
-            racesFile.lastRaceDefaults.opponentSoftness = float.Parse(splitLine[0]);
+            racesFile.lastRaceDefaults.opponentSoftness = float.Parse(splitLine[0], CultureInfo.InvariantCulture);
             racesFile.lastRaceDefaults.opponentMaxRank = int.Parse(splitLine[1]);
 
             racesTxtLines.MoveNext();
-            racesFile.firstRaceDefaults.opponentNastiness = float.Parse(racesTxtLines.Current);
+            racesFile.firstRaceDefaults.opponentNastiness = float.Parse(racesTxtLines.Current, CultureInfo.InvariantCulture);
             racesTxtLines.MoveNext();
-            racesFile.lastRaceDefaults.opponentNastiness = float.Parse(racesTxtLines.Current);
+            racesFile.lastRaceDefaults.opponentNastiness = float.Parse(racesTxtLines.Current, CultureInfo.InvariantCulture);
 
             currentBlockType = RacesFileBlockType.Race;
             break;
@@ -308,6 +303,6 @@ namespace Carma2ForgeLib.Modules.RaceModule {
       }
 
       config.WriteTxt(Carma2File.FontCol, linesToWrite);*/
-        }
-      }
+    }
+  }
 }

@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
+﻿using System.Drawing;
+using System.Globalization;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Carma2ForgeLib.Utilities {
   public class TxtEnumerator : IDisposable {
@@ -47,95 +42,147 @@ namespace Carma2ForgeLib.Utilities {
     }
 
     public int[] NextIntArray() {
-      string[] nextLineSplit = Next().Split(',');
+      Next();
+      return AsIntArray();
+    }
 
+    public int[] AsIntArray() {
+      string[] nextLineSplit = source.Current.Split(',');
       int[] ints = new int[nextLineSplit.Length];
       for (int i = 0; i < nextLineSplit.Length; i++) {
         ints[i] = int.Parse(nextLineSplit[i]);
       }
-
       return ints;
     }
 
     public float[] NextFloatArray() {
-      string[] nextLineSplit = Next().Split(',');
+      Next();
+      return AsFloatArray();
+    }
 
+    public float[] AsFloatArray() {
+      string[] nextLineSplit = source.Current.Split(',');
       float[] floats = new float[nextLineSplit.Length];
       for (int i = 0; i < nextLineSplit.Length; i++) {
-        floats[i] = float.Parse(nextLineSplit[i]);
+        floats[i] = float.Parse(nextLineSplit[i], CultureInfo.InvariantCulture);
       }
-
       return floats;
     }
 
     public byte[] NextByteArray() {
-      string[] nextLineSplit = Next().Split(',');
+      Next();
+      return AsByteArray();
+    }
 
+    public byte[] AsByteArray() {
+      string[] nextLineSplit = source.Current.Split(',');
       byte[] bytes = new byte[nextLineSplit.Length];
       for (int i = 0; i < nextLineSplit.Length; i++) {
         bytes[i] = byte.Parse(nextLineSplit[i]);
       }
-
       return bytes;
     }
+    public Color NextColorRGB() {
+      Next();
+      return AsColorRGB();
+    }
+
+    public Color AsColorRGB() {
+      byte[] bytes = AsByteArray();
+      if (bytes.Length != 3) {
+        throw new FormatException("Invalid color format - too colorful");
+      }
+
+      return Color.FromArgb(bytes[0], bytes[1], bytes[2]);
+    }
+
 
     public Color NextColorARGB() {
-      byte[] bytes = NextByteArray();
+      Next();
+      return AsColorARGB();
+    }
 
+    public Color AsColorARGB() {
+      byte[] bytes = AsByteArray();
       switch (bytes.Length) {
         case 3:
           return Color.FromArgb(bytes[0], bytes[1], bytes[2]);
         case 4:
           return Color.FromArgb(bytes[0], bytes[1], bytes[2], bytes[3]);
       }
-
       throw new FormatException("Invalid color format");
     }
 
     public Color NextColorRGBA() {
-      byte[] bytes = NextByteArray();
+      Next();
+      return AsColorRGBA();
+    }
 
+    public Color AsColorRGBA() {
+      byte[] bytes = AsByteArray();
       switch (bytes.Length) {
         case 3:
           return Color.FromArgb(bytes[0], bytes[1], bytes[2]);
         case 4:
           return Color.FromArgb(bytes[3], bytes[0], bytes[1], bytes[2]);
       }
-
       throw new FormatException("Invalid color format");
     }
 
     public Vector2 NextVector2() {
-      float[] floats = NextFloatArray();
+      Next();
+      return AsVector2();
+    }
+
+    public Vector2 AsVector2() {
+      float[] floats = AsFloatArray();
       if (floats.Length != 2)
         throw new FormatException("Invalid vector format");
-      
       return new Vector2(floats[0], floats[1]);
     }
 
     public Vector3 NextVector3() {
-      float[] floats = NextFloatArray();
+      Next();
+      return AsVector3();
+    }
+
+    public Vector3 AsVector3() {
+      float[] floats = AsFloatArray();
       if (floats.Length != 3)
         throw new FormatException("Invalid vector format");
-
       return new Vector3(floats[0], floats[1], floats[2]);
     }
 
     public Vector4 NextVector4() {
-      float[] floats = NextFloatArray();
+      Next();
+      return AsVector4();
+    }
+
+    public Vector4 AsVector4() {
+      float[] floats = AsFloatArray();
       if (floats.Length != 4)
         throw new FormatException("Invalid vector format");
       return new Vector4(floats[0], floats[1], floats[2], floats[3]);
     }
 
     public int NextInt() {
-      string nextLine = Next();
+      Next();
+      return AsInt();
+    }
+
+    public int AsInt() {
+      string nextLine = source.Current;
       return int.Parse(nextLine);
     }
 
     public float NextFloat() {
-      string nextLine = Next();
-      return float.Parse(nextLine);
+      Next();
+      return AsFloat();
+    }
+
+    public float AsFloat() {
+      string nextLine = source.Current;
+      return float.Parse(nextLine, CultureInfo.InvariantCulture);
     }
 
     public bool HasNext() {
