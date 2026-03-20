@@ -1,4 +1,5 @@
 ﻿using Carma2ForgeLib.Modules;
+using Carma2ForgeLib.Modules.MapModule;
 using Carma2ForgeLib.Modules.PixiesModule;
 using Carma2ForgeLib.Modules.RaceModule;
 using Carma2ForgeLib.Modules.TwtModule;
@@ -7,6 +8,7 @@ namespace Carma2Forge {
   public partial class RaceEditor : Form {
     private RaceModule raceModule = new RaceModule();
     private TwtModule twtModule = new TwtModule();
+    private MapModule mapModule = new MapModule();
     private PixiesModule pixiesModule = new PixiesModule();
     private Carma2ForgeConfig config;
 
@@ -16,6 +18,7 @@ namespace Carma2Forge {
       raceModule.Initialize(config);
       twtModule.Initialize(config);
       pixiesModule.Initialize(config);
+      mapModule.Initialize(config);
 
       InitializeComponent();
     }
@@ -64,14 +67,19 @@ namespace Carma2Forge {
         return;
       }
 
-      TwtFile raceTwt = twtModule.LoadTwt("RACES/" + selectedRaceEntry.fileName.Split('.')[0].ToLower() + ".TWT");
-      PixiesModule.PixiesFile pf = pixiesModule.ReadPixies(raceTwt.GetFile("PIXIES.P16"));
-
-      foreach (PixiesModule.PixiesFileEntry entry in pf.entries) {
-        if (entry.filename.ToLower().Contains("map")) {
-          pictureBox1.Image = entry.bitmap;
-          break;
+      try {
+        TwtFile raceTwt = twtModule.LoadTwt("RACES/" + selectedRaceEntry.CanonicalName + ".TWT");
+        MapFile parsedMap = mapModule.LoadMapFile(raceTwt.GetFile(selectedRaceEntry.CanonicalName + ".TXT"));
+        PixiesModule.PixiesFile pf = pixiesModule.ReadPixies(raceTwt.GetFile("PIXIES.P16"));
+        foreach (PixiesModule.PixiesFileEntry entry in pf.entries) {
+          if (entry.filename.ToLower() == parsedMap.minimap.mapPixelmapName.Split('.')[0].ToLower()) {
+            pictureBox1.Image = entry.bitmap;
+            break;
+          }
         }
+      } catch (Exception ex) {
+        // TODO: maps like quarry1 cause a crash because of an uncommented Point #2 in the txt - make parsing more lenient for such cases
+        MessageBox.Show("There was a problem parsing the map file - " + ex.ToString());
       }
     }
 

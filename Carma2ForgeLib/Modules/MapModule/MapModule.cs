@@ -614,19 +614,19 @@ namespace Carma2ForgeLib.Modules.MapModule {
             int soundGeneratorCount = mapTxtLines.AsInt();
             break;
           case MapBlockType.ReflectiveWindscreenSpecs:
-            MapReflectiveWindscreenSpecs specs = new MapReflectiveWindscreenSpecs();
-            specs.defaultScreenMaterial = mapTxtLines.AsString();
-            specs.darknessScreenMaterial = mapTxtLines.Next();
-            specs.fogScreenMaterial = mapTxtLines.Next();
-            specs.areasWithDifferentScreens = mapTxtLines.NextInt();
+            mapFile.reflectiveWindscreenSpecs = new MapReflectiveWindscreenSpecs();
+            mapFile.reflectiveWindscreenSpecs.defaultScreenMaterial = mapTxtLines.AsString();
+            mapFile.reflectiveWindscreenSpecs.darknessScreenMaterial = mapTxtLines.Next();
+            mapFile.reflectiveWindscreenSpecs.fogScreenMaterial = mapTxtLines.Next();
+            mapFile.reflectiveWindscreenSpecs.areasWithDifferentScreens = mapTxtLines.NextInt();
             break;
           case MapBlockType.Minimap:
-            MapMinimap minimap = new MapMinimap();
-            minimap.mapPixelmapName = mapTxtLines.AsString();
-            minimap.worldMapTransformationX = mapTxtLines.NextVector3();
-            minimap.worldMapTransformationY = mapTxtLines.NextVector3();
-            minimap.worldMapTransformationZ = mapTxtLines.NextVector3();
-            minimap.worldMapTransformationW = mapTxtLines.NextVector3();
+            mapFile.minimap = new MapMinimap();
+            mapFile.minimap.mapPixelmapName = mapTxtLines.AsString();
+            mapFile.minimap.worldMapTransformationX = mapTxtLines.NextVector3();
+            mapFile.minimap.worldMapTransformationY = mapTxtLines.NextVector3();
+            mapFile.minimap.worldMapTransformationZ = mapTxtLines.NextVector3();
+            mapFile.minimap.worldMapTransformationW = mapTxtLines.NextVector3();
             break;
           case MapBlockType.Funks:
             if (mapTxtLines.AsString() != "START OF FUNK") {

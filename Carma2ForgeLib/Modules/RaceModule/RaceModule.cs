@@ -43,6 +43,12 @@ namespace Carma2ForgeLib.Modules.RaceModule {
     public required int[] raceCompletionBonusOpponents;
     public required string raceDescription;
     public bool isExpansion;
+
+    public string CanonicalName {
+      get {
+        return fileName.Split('.')[0].ToLower();
+      }
+    }
   }
 
   public class RacesFile {
