@@ -27,6 +27,15 @@ namespace Carma2ForgeLib.Utilities {
       return BinaryPrimitives.ReadInt16BigEndian(bytes);
     }
 
+    public static float ReadSingleBE(this BinaryReader br) {
+      Span<byte> bytes = stackalloc byte[4];
+      br.Read(bytes);
+      if (BitConverter.IsLittleEndian) {
+        bytes.Reverse();
+      }
+      return BitConverter.ToSingle(bytes);
+    }
+
     public static string ReadNullTerminatedString(this BinaryReader br) {
       StringBuilder sb = new StringBuilder();
 

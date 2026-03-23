@@ -1,4 +1,6 @@
 using Carma2ForgeLib.Modules;
+using Carma2ForgeLib.Modules.DatModule;
+using Carma2ForgeLib.Modules.TwtModule;
 
 namespace Carma2Forge {
   public partial class MainForm : Form {
@@ -18,7 +20,15 @@ namespace Carma2Forge {
         DataPath = "data"
       };
 
-      new MapEditor(config, "newcity1").Show();
+      // new MapEditor(config, "newcity1").Show();
+
+      TwtModule twtModule = new TwtModule();
+      twtModule.Initialize(config);
+      DatModule datModule = new DatModule();
+      datModule.Initialize(config);
+
+      TwtFile newcity1 = twtModule.LoadTwt("RACES/newcity1.TWT");
+      DatFile newcity1Dat = datModule.LoadDat(newcity1.GetFile("newcity1.dat"));
     }
 
     private bool HasCarma2PathConfigured() {
