@@ -1,5 +1,6 @@
 using Carma2ForgeLib.Modules;
 using Carma2ForgeLib.Modules.DatModule;
+using Carma2ForgeLib.Modules.MatModule;
 using Carma2ForgeLib.Modules.TwtModule;
 
 namespace Carma2Forge {
@@ -26,9 +27,12 @@ namespace Carma2Forge {
       twtModule.Initialize(config);
       DatModule datModule = new DatModule();
       datModule.Initialize(config);
+      MatModule matModule = new MatModule();
+      matModule.Initialize(config);
 
       TwtFile newcity1 = twtModule.LoadTwt("RACES/newcity1.TWT");
       DatFile newcity1Dat = datModule.LoadDat(newcity1.GetFile("newcity1.dat"));
+      MatFile newcity1Mat = matModule.LoadMat(newcity1.GetFile("newcity1.mat"));
     }
 
     private bool HasCarma2PathConfigured() {
