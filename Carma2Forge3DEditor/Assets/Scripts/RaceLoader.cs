@@ -6,6 +6,7 @@ using UnityEngine;
 public class RaceLoader : MonoBehaviour
 {
     public Material defaultMaterial;
+    private Dictionary<string, Material> materialCache = new Dictionary<string, Material>();
 
     // Start is called before the first frame update
     void Start()
@@ -66,7 +67,38 @@ public class RaceLoader : MonoBehaviour
                     string matName = mesh.materials[matIndex];
                     MatFileMaterial c2mat = materialsByName.ContainsKey(matName) ? materialsByName[matName] : null;
 
-                    Material mat = new Material(defaultMaterial);
+                    Material mat;
+                    if (materialCache.ContainsKey(matName))
+                    {
+                        mat = materialCache[matName];
+                    }
+                    else
+                    {
+                        mat = new Material(defaultMaterial);
+                        mat.color = c2mat != null ? new Color32(c2mat.diffuseColor[0], c2mat.diffuseColor[1], c2mat.diffuseColor[2], c2mat.diffuseColor[3]) : Color.white;
+                        if (c2mat != null && c2mat.flags.HasFlag(MatFileMaterial.Settings.Two_Sided))
+                        {
+                            mat.SetInt("_Cull", (int)UnityEngine.Rendering.CullMode.Off);
+                        }
+
+                        if (mat.color.a < 1f)
+                        {
+                            // set material to translucent rendering mode
+                            mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                            mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                            mat.SetInt("_ZWrite", 0);
+                            mat.DisableKeyword("_ALPHATEST_ON");
+                            mat.EnableKeyword("_ALPHABLEND_ON");
+                            mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                            mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+                        }
+
+
+                        string texture = c2mat != null ? c2mat.texture : null;
+
+                        mat.SetTexture("_MainTex", pixiesFile.GetFile(texture)?.bitmap);                        
+                        materialCache[matName] = mat;
+                    }
                     //mat.color = new Color((float)rand.NextDouble(), (float)rand.NextDouble(), (float)rand.NextDouble());
 
                     /*foreach (PixiesFileEntry entry in pixiesFile.entries)
@@ -75,28 +107,6 @@ public class RaceLoader : MonoBehaviour
                         Debug.Log($"Looking for {matName.ToLower()} in pixies file entries");
                     }*/
 
-                    mat.color = c2mat != null ? new Color32(c2mat.diffuseColor[0], c2mat.diffuseColor[1], c2mat.diffuseColor[2], c2mat.diffuseColor[3]) : Color.white;
-                    if (c2mat != null && c2mat.flags.HasFlag(MatFileMaterial.Settings.Two_Sided))
-                    {
-                        mat.SetInt("_Cull", (int)UnityEngine.Rendering.CullMode.Off);
-                    }
-
-                    if (mat.color.a < 1f)
-                    {
-                        // set material to translucent rendering mode
-                        mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-                        mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-                        mat.SetInt("_ZWrite", 0);
-                        mat.DisableKeyword("_ALPHATEST_ON");
-                        mat.EnableKeyword("_ALPHABLEND_ON");
-                        mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-                        mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
-                    }
-
-
-                    string texture = c2mat != null ? c2mat.texture : null;
-
-                    mat.SetTexture("_MainTex", pixiesFile.GetFile(texture)?.bitmap);
                     materials[i] = mat;
                 }
                 else
