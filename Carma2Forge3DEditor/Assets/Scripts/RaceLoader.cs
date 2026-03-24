@@ -76,16 +76,18 @@ public class RaceLoader : MonoBehaviour
                     }*/
 
                     mat.color = c2mat != null ? new Color32(c2mat.diffuseColor[0], c2mat.diffuseColor[1], c2mat.diffuseColor[2], c2mat.diffuseColor[3]) : Color.white;
-                    if (c2mat != null && c2mat.diffuseColor[3] < 255)
+                    if (mat.color.a < 1f)
                     {
+                        // set material to translucent rendering mode
                         mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
                         mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
                         mat.SetInt("_ZWrite", 0);
                         mat.DisableKeyword("_ALPHATEST_ON");
                         mat.EnableKeyword("_ALPHABLEND_ON");
                         mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-                        mat.renderQueue = 3000;
+                        mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
                     }
+
 
                     string texture = c2mat != null ? c2mat.texture : null;
 
