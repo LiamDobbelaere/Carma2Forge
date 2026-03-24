@@ -30,7 +30,9 @@ public class RaceLoader : MonoBehaviour
             MeshRenderer meshRenderer = meshObj.AddComponent<MeshRenderer>();
 
             // Group faces by materialId for submeshes
+            // materialId is 1-based in BRender (0 = no material assigned)
             var facesByMaterial = mesh.faces
+                .Where(f => f.materialId > 0)
                 .GroupBy(f => f.materialId)
                 .OrderBy(g => g.Key)
                 .ToList();
@@ -58,12 +60,10 @@ public class RaceLoader : MonoBehaviour
             Material[] materials = new Material[facesByMaterial.Count];
             for (int i = 0; i < facesByMaterial.Count; i++)
             {
-                ushort matId = facesByMaterial[i].Key;
-                if (mesh.materials != null && matId < mesh.materials.Length)
+                int matIndex = facesByMaterial[i].Key - 1; // materialId is 1-based
+                if (mesh.materials != null && matIndex >= 0 && matIndex < mesh.materials.Length)
                 {
-                    // TODO: load actual material/texture by name: mesh.materials[matId]
-                    // For now, make a random color based on the mesh.materials[matId] name
-                    string matName = mesh.materials[matId];
+                    string matName = mesh.materials[matIndex];
                     MatFileMaterial c2mat = materialsByName.ContainsKey(matName) ? materialsByName[matName] : null;
 
                     Material mat = new Material(defaultMaterial);
@@ -97,9 +97,8 @@ public class RaceLoader : MonoBehaviour
                     materials[i] = defaultMaterial;
                 }
             }
-            meshRenderer.materials = materials.Reverse().ToArray(); // reverse because unity applies materials in reverse order for some reason
-
             meshFilter.mesh = unityMesh;
+            meshRenderer.materials = materials;
         }
     }
 
