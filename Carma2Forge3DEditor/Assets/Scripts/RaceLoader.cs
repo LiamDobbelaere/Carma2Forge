@@ -41,7 +41,7 @@ public class RaceLoader : MonoBehaviour
             Mesh unityMesh = new Mesh
             {
                 vertices = System.Array.ConvertAll(mesh.vertices, v => new Vector3(v.X, v.Y, v.Z)),
-                uv = System.Array.ConvertAll(mesh.uvs, uv => new Vector2(uv.X, uv.Y)),
+                uv = System.Array.ConvertAll(mesh.uvs, uv => new Vector2(1f - uv.X, 1f - uv.Y)),
                 subMeshCount = facesByMaterial.Count
             };
 
