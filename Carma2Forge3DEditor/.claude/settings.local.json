@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find /d/Git/Carma2Forge3DEditor/Assets/Scripts -name *.cs -type f)"
+    ]
+  }
+}
