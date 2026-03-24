@@ -40,15 +40,15 @@ public class RaceLoader : MonoBehaviour
             // convert dat mesh to unity mesh
             Mesh unityMesh = new Mesh
             {
-                vertices = System.Array.ConvertAll(mesh.vertices, v => new Vector3(v.X, v.Y, v.Z)),
-                uv = System.Array.ConvertAll(mesh.uvs, uv => new Vector2(1f - uv.X, 1f - uv.Y)),
+                vertices = System.Array.ConvertAll(mesh.vertices, v => new Vector3(-v.X, v.Y, v.Z)),
+                uv = System.Array.ConvertAll(mesh.uvs, uv => new Vector2(uv.X, 1f - uv.Y)),
                 subMeshCount = facesByMaterial.Count
             };
 
             for (int i = 0; i < facesByMaterial.Count; i++)
             {
                 int[] triangles = facesByMaterial[i]
-                    .SelectMany(f => new int[] { f.v1, f.v2, f.v3 })
+                    .SelectMany(f => new int[] { f.v1, f.v3, f.v2 })
                     .ToArray();
                 unityMesh.SetTriangles(triangles, i);
             }
@@ -76,6 +76,11 @@ public class RaceLoader : MonoBehaviour
                     }*/
 
                     mat.color = c2mat != null ? new Color32(c2mat.diffuseColor[0], c2mat.diffuseColor[1], c2mat.diffuseColor[2], c2mat.diffuseColor[3]) : Color.white;
+                    if (c2mat != null && c2mat.flags.HasFlag(MatFileMaterial.Settings.Two_Sided))
+                    {
+                        mat.SetInt("_Cull", (int)UnityEngine.Rendering.CullMode.Off);
+                    }
+
                     if (mat.color.a < 1f)
                     {
                         // set material to translucent rendering mode
