@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//d/Git/BRender-v1.3.2/**)",
+      "Bash(xargs grep:*)"
+    ]
+  }
+}

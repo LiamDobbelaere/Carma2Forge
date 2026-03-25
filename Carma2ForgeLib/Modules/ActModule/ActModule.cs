@@ -13,13 +13,15 @@ namespace Carma2ForgeLib.Modules.MatModule {
     public string model;
     public string material;
     public Matrix3D transform;
-    public MeshExtents bounds;
+    public MeshExtents? bounds;
     public Light light;
     public Camera camera;
+    public ActFileActor parent;
+    public List<ActFileActor> children = new();
   }
 
   public class ActFile {
-    public List<ActFileActor> actors = new List<ActFileActor>();
+    public List<ActFileActor> roots = new List<ActFileActor>();
   }
 
   public enum CameraType {
@@ -257,7 +259,7 @@ namespace Carma2ForgeLib.Modules.MatModule {
     public ActFile LoadAct(TwtFileEntry twtFileEntry) {
       MemoryStream stream = new MemoryStream(twtFileEntry.data);
       ActFile act = new ActFile();
-      ActFileActor newActor = new ActFileActor();
+      Stack<object> stack = new Stack<object>();
 
       using (BinaryReader br = new BinaryReader(stream)) {
         ValidateActHeader(br);
@@ -266,73 +268,105 @@ namespace Carma2ForgeLib.Modules.MatModule {
           ActChunkType chunkType = (ActChunkType)br.ReadUInt32BE();
           int length = (int)br.ReadUInt32BE();
 
-          newActor = new ActFileActor();
-
           switch (chunkType) {
-            case ActChunkType.Actor:
-              newActor.type = (ActorType)br.ReadByte();
-              newActor.renderStyle = (RenderStyle)br.ReadByte();
-              newActor.identifier = br.ReadNullTerminatedString();
-              if (newActor.identifier == string.Empty) {
-                newActor.identifier = "NO_IDENTIFIER";
+            case ActChunkType.Actor: {
+              ActFileActor actor = new ActFileActor();
+              actor.type = (ActorType)br.ReadByte();
+              actor.renderStyle = (RenderStyle)br.ReadByte();
+              actor.identifier = br.ReadNullTerminatedString();
+              if (actor.identifier == string.Empty) {
+                actor.identifier = "NO_IDENTIFIER";
               }
+              actor.transform = Matrix3D.Identity;
+              stack.Push(actor);
               break;
+            }
+
             case ActChunkType.Model:
-              newActor.model = br.ReadNullTerminatedString();
+              ((ActFileActor)stack.Peek()).model = br.ReadNullTerminatedString();
               break;
-            case ActChunkType.Transform:
-              break;
+
             case ActChunkType.Material:
-              newActor.material = br.ReadNullTerminatedString();
+              ((ActFileActor)stack.Peek()).material = br.ReadNullTerminatedString();
               break;
-            case ActChunkType.Light:
-              break;
-            case ActChunkType.CameraOld:
-              break;
-            case ActChunkType.Bounds:
-              break;
-            case ActChunkType.AddChild:
-              break;
+
             case ActChunkType.Matrix:
-              newActor.transform = new Matrix3D(
+              stack.Push(new Matrix3D(
                 br.ReadSingleBE(), br.ReadSingleBE(), br.ReadSingleBE(), br.ReadSingleBE(),
                 br.ReadSingleBE(), br.ReadSingleBE(), br.ReadSingleBE(), br.ReadSingleBE(),
                 br.ReadSingleBE(), br.ReadSingleBE(), br.ReadSingleBE(), br.ReadSingleBE()
-              );
+              ));
               break;
+
+            case ActChunkType.Transform: {
+              Matrix3D transform = (Matrix3D)stack.Pop();
+              ((ActFileActor)stack.Peek()).transform = transform;
+              break;
+            }
+
             case ActChunkType.BoundingBox:
-              newActor.bounds = new MeshExtents(
+              stack.Push(new MeshExtents(
                 new Vector3(br.ReadSingleBE(), br.ReadSingleBE(), br.ReadSingleBE()),
                 new Vector3(br.ReadSingleBE(), br.ReadSingleBE(), br.ReadSingleBE())
-              );
+              ));
               break;
+
+            case ActChunkType.Bounds: {
+              MeshExtents bounds = (MeshExtents)stack.Pop();
+              ((ActFileActor)stack.Peek()).bounds = bounds;
+              break;
+            }
+
             case ActChunkType.LightOld:
-              newActor.light = new Light {
+              stack.Push(new Light {
                 type = (LightType)br.ReadByte(),
                 color = Color.FromArgb(br.ReadByte(), br.ReadByte(), br.ReadByte()),
                 attenuation = new Vector3(br.ReadSingleBE(), br.ReadSingleBE(), br.ReadSingleBE()),
                 coneInner = br.ReadUInt16BE(),
                 coneOuter = br.ReadUInt16BE()
-              };
-              newActor.identifier = br.ReadNullTerminatedString();
+              });
               break;
+
+            case ActChunkType.Light: {
+              Light light = (Light)stack.Pop();
+              ((ActFileActor)stack.Peek()).light = light;
+              break;
+            }
+
             case ActChunkType.Camera:
-              newActor.camera = new Camera {
+              stack.Push(new Camera {
                 type = (CameraType)br.ReadByte(),
                 fov = br.ReadUInt16BE(),
                 hitherZ = br.ReadSingleBE(),
                 yonZ = br.ReadSingleBE(),
                 aspect = br.ReadSingleBE()
-              };
-              newActor.identifier = br.ReadNullTerminatedString();
+              });
               break;
-            case ActChunkType.EOF:
-              break;
-            default:
-              throw new Exception($"Unsupported chunk type {chunkType} in MAT file");
-          }
 
-          act.actors.Add(newActor);
+            case ActChunkType.CameraOld: {
+              Camera camera = (Camera)stack.Pop();
+              ((ActFileActor)stack.Peek()).camera = camera;
+              break;
+            }
+
+            case ActChunkType.AddChild: {
+              ActFileActor child = (ActFileActor)stack.Pop();
+              ActFileActor parent = (ActFileActor)stack.Peek();
+              child.parent = parent;
+              parent.children.Add(child);
+              break;
+            }
+
+            case ActChunkType.EOF:
+              if (stack.Count > 0 && stack.Peek() is ActFileActor root) {
+                stack.Pop();
+                act.roots.Add(root);
+              }
+              break;
+
+            default:
+              throw new Exception($"Unsupported chunk type {chunkType} in ACT file");
+          }
         }
       }
 
