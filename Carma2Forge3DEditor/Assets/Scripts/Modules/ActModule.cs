@@ -128,7 +128,7 @@ public class ActModule {
             actor.renderStyle = (RenderStyle)br.ReadByte();
             actor.identifier = br.ReadNullTerminatedString();
             if (actor.identifier == string.Empty) {
-              actor.identifier = "NO_IDENTIFIER";
+              actor.identifier = actor.type.ToString();
             }
             actor.transform = Matrix3D.Identity;
             stack.Push(actor);
