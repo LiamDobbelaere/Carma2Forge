@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find /d/Git/ToxicRagers -type f \\\\\\(-name *.md -o -name *.wiki -o -name *.txt \\\\\\))",
+      "Bash(xargs cat:*)",
+      "Bash(find . -name *Dat* -type f)",
+      "Read(//d/Git/Carma2Forge/**)"
+    ]
+  }
+}

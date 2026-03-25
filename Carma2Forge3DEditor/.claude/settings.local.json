@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(find /d/Git/Carma2Forge3DEditor/Assets/Scripts -name *.cs -type f)"
+      "Bash(find /d/Git/Carma2Forge3DEditor/Assets/Scripts -name *.cs -type f)",
+      "Bash(xargs ls:*)",
+      "Bash(xargs grep:*)",
+      "Bash(find /d/Git/ToxicRagers -type f -name \"*.cs\" -exec grep -l \"DAT\\\\|ACT\" {})"
     ]
   }
 }

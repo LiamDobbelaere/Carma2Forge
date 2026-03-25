@@ -29,10 +29,13 @@ namespace Carma2Forge {
       datModule.Initialize(config);
       MatModule matModule = new MatModule();
       matModule.Initialize(config);
+      ActModule actModule = new ActModule();
+      actModule.Initialize(config);
 
       TwtFile newcity1 = twtModule.LoadTwt("RACES/newcity1.TWT");
       DatFile newcity1Dat = datModule.LoadDat(newcity1.GetFile("newcity1.dat"));
       MatFile newcity1Mat = matModule.LoadMat(newcity1.GetFile("newcity1.mat"));
+      ActFile newcity1Act = actModule.LoadAct(newcity1.GetFile("newcity1.act"));
     }
 
     private bool HasCarma2PathConfigured() {
