@@ -14,11 +14,13 @@ public class RaceLoader : MonoBehaviour
         PixiesModule pixiesModule = new PixiesModule();
         TwtFile twtFile = twtModule.LoadTwt("D:\\SteamLibrary\\steamapps\\common\\Carmageddon2\\data\\RACES\\newcity1.TWT");
         TwtFile texturesTwtFile = twtModule.LoadTwt("D:\\SteamLibrary\\steamapps\\common\\Carmageddon2\\data\\RACES\\NEWC.TWT");
+        TwtFile regTwtFile = twtModule.LoadTwt("D:\\SteamLibrary\\steamapps\\common\\Carmageddon2\\data\\Reg\\PIXELMAP.TWT");
         DatFile datFile = new DatModule().LoadDat(twtFile.GetFile("newcity1.dat"));
         MatFile matFile = new MatModule().LoadMat(twtFile.GetFile("newcity1.mat"));
         ActFile actFile = new ActModule().LoadAct(twtFile.GetFile("newcity1.act"));
         Dictionary<string, MatFileMaterial> materialsByName = matFile.GetMaterialsByName();
         PixiesFile pixiesFile = pixiesModule.LoadPixies(texturesTwtFile.GetFile("PIXIES.P16"));
+        PixiesFile regPixiesFile = pixiesModule.LoadPixies(regTwtFile.GetFile("PIXIES.P16"));
 
         // Build mesh lookup by name
         foreach (DatMesh mesh in datFile.meshes)
@@ -26,14 +28,16 @@ public class RaceLoader : MonoBehaviour
             meshLookup[mesh.name] = mesh;
         }
 
+        PixiesFile[] allPixies = new[] { pixiesFile, regPixiesFile };
+
         // Build scene from ACT hierarchy
         foreach (ActFileActor root in actFile.roots)
         {
-            BuildActorHierarchy(root, transform, materialsByName, pixiesFile);
+            BuildActorHierarchy(root, transform, materialsByName, allPixies);
         }
     }
 
-    private void BuildActorHierarchy(ActFileActor actor, Transform parentTransform, Dictionary<string, MatFileMaterial> materialsByName, PixiesFile pixiesFile)
+    private void BuildActorHierarchy(ActFileActor actor, Transform parentTransform, Dictionary<string, MatFileMaterial> materialsByName, PixiesFile[] allPixies)
     {
         GameObject go = new GameObject(actor.identifier);
         go.transform.SetParent(parentTransform, false);
@@ -42,15 +46,22 @@ public class RaceLoader : MonoBehaviour
         ApplyMatrix3D(go.transform, actor.transform);
 
         // If this actor references a model, attach the mesh
-        if (actor.model != null && meshLookup.ContainsKey(actor.model))
+        if (actor.model != null)
         {
-            AttachMesh(go, meshLookup[actor.model], materialsByName, pixiesFile);
+            if (meshLookup.ContainsKey(actor.model))
+            {
+                AttachMesh(go, meshLookup[actor.model], materialsByName, allPixies);
+            }
+            else
+            {
+                Debug.LogWarning($"Missing model: {actor.model} (actor: {actor.identifier})");
+            }
         }
 
         // Recurse into children
         foreach (ActFileActor child in actor.children)
         {
-            BuildActorHierarchy(child, go.transform, materialsByName, pixiesFile);
+            BuildActorHierarchy(child, go.transform, materialsByName, allPixies);
         }
     }
 
@@ -72,7 +83,7 @@ public class RaceLoader : MonoBehaviour
         t.localScale = new Vector3(mat.GetColumn(0).magnitude, mat.GetColumn(1).magnitude, mat.GetColumn(2).magnitude);
     }
 
-    private void AttachMesh(GameObject go, DatMesh datMesh, Dictionary<string, MatFileMaterial> materialsByName, PixiesFile pixiesFile)
+    private void AttachMesh(GameObject go, DatMesh datMesh, Dictionary<string, MatFileMaterial> materialsByName, PixiesFile[] allPixies)
     {
         MeshFilter meshFilter = go.AddComponent<MeshFilter>();
         MeshRenderer meshRenderer = go.AddComponent<MeshRenderer>();
@@ -108,7 +119,7 @@ public class RaceLoader : MonoBehaviour
             if (datMesh.materials != null && matIndex >= 0 && matIndex < datMesh.materials.Length)
             {
                 string matName = datMesh.materials[matIndex];
-                materials[i] = GetOrCreateMaterial(matName, materialsByName, pixiesFile);
+                materials[i] = GetOrCreateMaterial(matName, materialsByName, allPixies);
             }
             else
             {
@@ -120,7 +131,7 @@ public class RaceLoader : MonoBehaviour
         meshRenderer.materials = materials;
     }
 
-    private Material GetOrCreateMaterial(string matName, Dictionary<string, MatFileMaterial> materialsByName, PixiesFile pixiesFile)
+    private Material GetOrCreateMaterial(string matName, Dictionary<string, MatFileMaterial> materialsByName, PixiesFile[] allPixies)
     {
         if (materialCache.ContainsKey(matName))
             return materialCache[matName];
@@ -146,7 +157,23 @@ public class RaceLoader : MonoBehaviour
         }
 
         string texture = c2mat != null ? c2mat.texture : null;
-        mat.SetTexture("_MainTex", pixiesFile.GetFile(texture)?.bitmap);
+        if (texture != null)
+        {
+            PixiesFileEntry pixiesEntry = null;
+            foreach (var pixies in allPixies)
+            {
+                pixiesEntry = pixies.GetFile(texture);
+                if (pixiesEntry != null) break;
+            }
+            if (pixiesEntry != null)
+            {
+                mat.SetTexture("_MainTex", pixiesEntry.bitmap);
+            }
+            else
+            {
+                Debug.LogWarning($"Missing texture: {texture} (material: {matName})");
+            }
+        }
 
         materialCache[matName] = mat;
         return mat;
