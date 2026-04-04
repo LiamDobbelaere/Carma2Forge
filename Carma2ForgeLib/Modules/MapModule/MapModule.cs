@@ -270,6 +270,8 @@ namespace Carma2ForgeLib.Modules.MapModule {
     public float maxVolume;
     public int count; // 15, TODO: not sure what this is
     public int[] scatterSounds;
+    public int continuousSound;
+    public string saturationMode;
   }
 
   public class MapSoundGenerator {
@@ -594,7 +596,7 @@ namespace Carma2ForgeLib.Modules.MapModule {
 
             for (int i = 0; i < specialEffectVolumeCount; i++) {
               MapSpecialEffectsVolume volume = new MapSpecialEffectsVolume();
-              volume.type = mapTxtLines.Next();
+              volume.type = mapTxtLines.Next().Split(' ')[0];
               if (volume.type == "BOX") {
                 volume.p1 = mapTxtLines.NextVector3();
                 volume.p2 = mapTxtLines.NextVector3();
@@ -630,6 +632,11 @@ namespace Carma2ForgeLib.Modules.MapModule {
                   for (int j = 0; j < scatterSoundCount; j++) {
                     volume.scatterSounds[j] = mapTxtLines.NextInt();
                   }
+                } else if (volume.soundType == "SATURATED") {
+                  volume.saturationMode = mapTxtLines.Next();
+                  volume.minVolume = mapTxtLines.NextFloat();
+                  volume.maxVolume = mapTxtLines.NextFloat();
+                  volume.continuousSound = mapTxtLines.NextInt();
                 }
               }
 
@@ -637,14 +644,16 @@ namespace Carma2ForgeLib.Modules.MapModule {
             }
             break;
           case MapBlockType.SoundGenerators:
-            int soundGeneratorCount = mapTxtLines.AsInt();
+            try {
+              int soundGeneratorCount = mapTxtLines.AsInt();
+            } catch (Exception e) {
+              // sometimes sound generator thingy is missing, and windscreen specs follow next instead
+              mapFile.reflectiveWindscreenSpecs = LoadReflectiveWindscreenSpecs(mapTxtLines);
+              currentBlock++; // skip reflective windscreen specs now
+            }
             break;
           case MapBlockType.ReflectiveWindscreenSpecs:
-            mapFile.reflectiveWindscreenSpecs = new MapReflectiveWindscreenSpecs();
-            mapFile.reflectiveWindscreenSpecs.defaultScreenMaterial = mapTxtLines.AsString();
-            mapFile.reflectiveWindscreenSpecs.darknessScreenMaterial = mapTxtLines.Next();
-            mapFile.reflectiveWindscreenSpecs.fogScreenMaterial = mapTxtLines.Next();
-            mapFile.reflectiveWindscreenSpecs.areasWithDifferentScreens = mapTxtLines.NextInt();
+            mapFile.reflectiveWindscreenSpecs = LoadReflectiveWindscreenSpecs(mapTxtLines);
             break;
           case MapBlockType.Minimap:
             mapFile.minimap = new MapMinimap();
@@ -829,6 +838,15 @@ namespace Carma2ForgeLib.Modules.MapModule {
       return explosion;
     }
 
+    private MapReflectiveWindscreenSpecs LoadReflectiveWindscreenSpecs(TxtEnumerator mapTxtLines) {
+      MapReflectiveWindscreenSpecs result = new MapReflectiveWindscreenSpecs();
+      result.defaultScreenMaterial = mapTxtLines.AsString();
+      result.darknessScreenMaterial = mapTxtLines.Next();
+      result.fogScreenMaterial = mapTxtLines.Next();
+      result.areasWithDifferentScreens = mapTxtLines.NextInt();
+
+      return result;
+    }
     private MapSmashableNonCarCuboid LoadSmashableNonCarCuboid(TxtEnumerator mapTxtLines) {
       MapSmashableNonCarCuboid cuboid = new MapSmashableNonCarCuboid();
       cuboid.delay = mapTxtLines.NextVector2();

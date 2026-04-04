@@ -3,5 +3,6 @@
     public const string FontCol = "FontCol.TXT";
     public const string Opponent = "OPPONENT.TXT";
     public const string Races = "RACES.TXT";
+    public const string Data = "DATA.TWT";
   }
 }

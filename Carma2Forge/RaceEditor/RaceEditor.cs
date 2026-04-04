@@ -67,20 +67,16 @@ namespace Carma2Forge {
         return;
       }
 
-      try {
-        TwtFile raceTwt = twtModule.LoadTwt("RACES/" + selectedRaceEntry.CanonicalName + ".TWT");
-        MapFile parsedMap = mapModule.LoadMapFile(raceTwt.GetFile(selectedRaceEntry.CanonicalName + ".TXT"));
-        PixiesModule.PixiesFile pf = pixiesModule.ReadPixies(raceTwt.GetFile("PIXIES.P16"));
-        foreach (PixiesModule.PixiesFileEntry entry in pf.entries) {
-          if (entry.filename.ToLower() == parsedMap.minimap.mapPixelmapName.Split('.')[0].ToLower()) {
-            pictureBox1.Image = entry.bitmap;
-            break;
-          }
+      TwtFile raceTwt = twtModule.LoadTwt("RACES/" + selectedRaceEntry.CanonicalName + ".TWT");
+      MapFile parsedMap = mapModule.LoadMapFile(raceTwt.GetFile(selectedRaceEntry.CanonicalName + ".TXT"));
+      PixiesModule.PixiesFile pf = pixiesModule.ReadPixies(raceTwt.GetFile("PIXIES.P16"));
+      foreach (PixiesModule.PixiesFileEntry entry in pf.entries) {
+        if (entry.filename.ToLower() == parsedMap.minimap.mapPixelmapName.Split('.')[0].ToLower()) {
+          pictureBox1.Image = entry.bitmap;
+          break;
         }
-      } catch (Exception ex) {
-        // TODO: maps like quarry1 cause a crash because of an uncommented Point #2 in the txt - make parsing more lenient for such cases
-        MessageBox.Show("There was a problem parsing the map file - " + ex.ToString());
       }
+      
     }
 
     private void btnEditMap_Click(object sender, EventArgs e) {

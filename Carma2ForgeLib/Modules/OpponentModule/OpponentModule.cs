@@ -1,6 +1,7 @@
-﻿using Carma2ForgeLib.Enums;
+﻿namespace Carma2ForgeLib.Modules.OpponentModule {
+  using Carma2ForgeLib.Enums;
+  using Carma2ForgeLib.Modules.TwtModule;
 
-namespace Carma2ForgeLib.Modules.OpponentModule {
   public enum NetworkAvailability {
     Eagle,
     All
@@ -35,10 +36,13 @@ namespace Carma2ForgeLib.Modules.OpponentModule {
 
   public class OpponentModule : BaseModule {
     private Carma2ForgeConfig config;
+    private TwtModule twtModule; 
     private List<OpponentEntry> opponentEntries = new List<OpponentEntry>();
 
     public void Initialize(Carma2ForgeConfig config) {
       this.config = config;
+      twtModule = new TwtModule();
+      twtModule.Initialize(config);
 
       LoadOpponentEntries();
     }
@@ -48,8 +52,11 @@ namespace Carma2ForgeLib.Modules.OpponentModule {
     }
 
     public void LoadOpponentEntries() {
+      TwtFile dataFile = twtModule.LoadTwt(Carma2File.Data);
+      TwtFileEntry opponentTxt = dataFile.GetFile(Carma2File.Opponent);
+
       opponentEntries.Clear();
-      using IEnumerator<string> opponentEntryLines = config.ReadTxt(Carma2File.Opponent).GetEnumerator();
+      using IEnumerator<string> opponentEntryLines = config.ReadTxt(opponentTxt).GetEnumerator();
 
       bool firstLine = true;
       while (opponentEntryLines.MoveNext()) {

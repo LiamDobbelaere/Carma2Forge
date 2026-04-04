@@ -6,6 +6,7 @@ namespace Carma2ForgeLib.Utilities {
   public class TxtEnumerator : IDisposable {
     private bool hasPeeked;
     private string peekedValue;
+    private string previousLine;
 
     private readonly IEnumerator<string> source;
 
@@ -19,6 +20,8 @@ namespace Carma2ForgeLib.Utilities {
 
     public string Peek() {
       if (!hasPeeked) {
+        previousLine = source.Current;
+
         if (!source.MoveNext())
           throw new InvalidOperationException("No more elements");
 
@@ -34,6 +37,8 @@ namespace Carma2ForgeLib.Utilities {
         hasPeeked = false;
         return peekedValue;
       }
+
+      previousLine = source.Current;
 
       if (!source.MoveNext())
         throw new InvalidOperationException("No more elements");
@@ -64,7 +69,11 @@ namespace Carma2ForgeLib.Utilities {
       string[] nextLineSplit = source.Current.Split(',');
       float[] floats = new float[nextLineSplit.Length];
       for (int i = 0; i < nextLineSplit.Length; i++) {
-        floats[i] = float.Parse(nextLineSplit[i], CultureInfo.InvariantCulture);
+        if (float.TryParse(nextLineSplit[i], NumberStyles.Float, CultureInfo.InvariantCulture, out float result)) {
+          floats[i] = result;
+        } else {
+          //throw new FormatException($"Invalid float format: '{nextLineSplit[i]}'");
+        }
       }
       return floats;
     }
@@ -148,8 +157,10 @@ namespace Carma2ForgeLib.Utilities {
 
     public Vector3 AsVector3() {
       float[] floats = AsFloatArray();
-      if (floats.Length != 3)
-        throw new FormatException("Invalid vector format");
+      if (floats.Length != 3) {
+        // fallback for stuff like quarry1 which has '0 0 0' which seems invalid 
+        floats = new float[3];
+      }
       return new Vector3(floats[0], floats[1], floats[2]);
     }
 
@@ -172,7 +183,9 @@ namespace Carma2ForgeLib.Utilities {
 
     public int AsInt() {
       string nextLine = source.Current;
-      return int.Parse(nextLine);
+      string numbersOnly = new string(nextLine.Where(char.IsDigit).ToArray());
+
+      return int.Parse(numbersOnly);
     }
 
     public string AsString() {

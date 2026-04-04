@@ -27,11 +27,12 @@
     ///  the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent() {
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
       fbdCarmaPath = new FolderBrowserDialog();
-      btnFontEditor = new Button();
-      btnOpponentEditor = new Button();
       btnTwtEditor = new Button();
       btnRaceEditor = new Button();
+      btnOpponentEditor = new Button();
+      btnFontEditor = new Button();
       SuspendLayout();
       // 
       // fbdCarmaPath
@@ -40,29 +41,9 @@
       fbdCarmaPath.RootFolder = Environment.SpecialFolder.MyComputer;
       fbdCarmaPath.ShowNewFolderButton = false;
       // 
-      // btnFontEditor
-      // 
-      btnFontEditor.Location = new Point(342, 249);
-      btnFontEditor.Name = "btnFontEditor";
-      btnFontEditor.Size = new Size(116, 35);
-      btnFontEditor.TabIndex = 0;
-      btnFontEditor.Text = "Font Editor";
-      btnFontEditor.UseVisualStyleBackColor = true;
-      btnFontEditor.Click += btnFontEditing_Click;
-      // 
-      // btnOpponentEditor
-      // 
-      btnOpponentEditor.Location = new Point(342, 208);
-      btnOpponentEditor.Name = "btnOpponentEditor";
-      btnOpponentEditor.Size = new Size(116, 35);
-      btnOpponentEditor.TabIndex = 1;
-      btnOpponentEditor.Text = "Opponent Editor";
-      btnOpponentEditor.UseVisualStyleBackColor = true;
-      btnOpponentEditor.Click += btnOpponentEditor_Click;
-      // 
       // btnTwtEditor
       // 
-      btnTwtEditor.Location = new Point(342, 290);
+      btnTwtEditor.Location = new Point(672, 403);
       btnTwtEditor.Name = "btnTwtEditor";
       btnTwtEditor.Size = new Size(116, 35);
       btnTwtEditor.TabIndex = 2;
@@ -72,25 +53,74 @@
       // 
       // btnRaceEditor
       // 
-      btnRaceEditor.Location = new Point(342, 167);
+      btnRaceEditor.BackColor = Color.FromArgb(216, 0, 0, 0);
+      btnRaceEditor.FlatStyle = FlatStyle.Flat;
+      btnRaceEditor.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      btnRaceEditor.ForeColor = Color.Lime;
+      btnRaceEditor.Image = Properties.Resources.list_2_32;
+      btnRaceEditor.ImageAlign = ContentAlignment.TopCenter;
+      btnRaceEditor.Location = new Point(12, 12);
       btnRaceEditor.Name = "btnRaceEditor";
-      btnRaceEditor.Size = new Size(116, 35);
+      btnRaceEditor.Padding = new Padding(8, 16, 8, 8);
+      btnRaceEditor.Size = new Size(126, 119);
       btnRaceEditor.TabIndex = 3;
       btnRaceEditor.Text = "Race Editor";
-      btnRaceEditor.UseVisualStyleBackColor = true;
+      btnRaceEditor.TextAlign = ContentAlignment.BottomCenter;
+      btnRaceEditor.UseVisualStyleBackColor = false;
       btnRaceEditor.Click += btnRaceEditor_Click;
+      // 
+      // btnOpponentEditor
+      // 
+      btnOpponentEditor.BackColor = Color.FromArgb(216, 0, 0, 0);
+      btnOpponentEditor.FlatStyle = FlatStyle.Flat;
+      btnOpponentEditor.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      btnOpponentEditor.ForeColor = Color.Lime;
+      btnOpponentEditor.Image = Properties.Resources.car_23_32;
+      btnOpponentEditor.ImageAlign = ContentAlignment.TopCenter;
+      btnOpponentEditor.Location = new Point(144, 12);
+      btnOpponentEditor.Name = "btnOpponentEditor";
+      btnOpponentEditor.Padding = new Padding(8, 16, 8, 8);
+      btnOpponentEditor.Size = new Size(126, 119);
+      btnOpponentEditor.TabIndex = 4;
+      btnOpponentEditor.Text = "Opponent Editor";
+      btnOpponentEditor.TextAlign = ContentAlignment.BottomCenter;
+      btnOpponentEditor.UseVisualStyleBackColor = false;
+      btnOpponentEditor.Click += btnOpponentEditor_Click;
+      // 
+      // btnFontEditor
+      // 
+      btnFontEditor.BackColor = Color.FromArgb(216, 0, 0, 0);
+      btnFontEditor.FlatStyle = FlatStyle.Flat;
+      btnFontEditor.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+      btnFontEditor.ForeColor = Color.Lime;
+      btnFontEditor.Image = Properties.Resources.generic_text_32;
+      btnFontEditor.ImageAlign = ContentAlignment.TopCenter;
+      btnFontEditor.Location = new Point(276, 12);
+      btnFontEditor.Name = "btnFontEditor";
+      btnFontEditor.Padding = new Padding(8, 16, 8, 8);
+      btnFontEditor.Size = new Size(126, 119);
+      btnFontEditor.TabIndex = 5;
+      btnFontEditor.Text = "Font Editor";
+      btnFontEditor.TextAlign = ContentAlignment.BottomCenter;
+      btnFontEditor.UseVisualStyleBackColor = false;
+      btnFontEditor.Click += btnFontEditor_Click;
       // 
       // MainForm
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
       AutoScaleMode = AutoScaleMode.Font;
+      BackgroundImage = Properties.Resources.main;
+      BackgroundImageLayout = ImageLayout.Stretch;
       ClientSize = new Size(800, 450);
+      Controls.Add(btnFontEditor);
+      Controls.Add(btnOpponentEditor);
       Controls.Add(btnRaceEditor);
       Controls.Add(btnTwtEditor);
-      Controls.Add(btnOpponentEditor);
-      Controls.Add(btnFontEditor);
+      DoubleBuffered = true;
+      FormBorderStyle = FormBorderStyle.FixedSingle;
+      Icon = (Icon)resources.GetObject("$this.Icon");
       Name = "MainForm";
-      Text = "Form1";
+      Text = "Carma 2 Forge";
       Load += MainForm_Load;
       ResumeLayout(false);
     }
@@ -98,9 +128,9 @@
     #endregion
 
     private FolderBrowserDialog fbdCarmaPath;
-    private Button btnFontEditor;
-    private Button btnOpponentEditor;
     private Button btnTwtEditor;
     private Button btnRaceEditor;
+    private Button btnOpponentEditor;
+    private Button btnFontEditor;
   }
 }

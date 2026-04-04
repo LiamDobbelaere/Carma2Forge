@@ -1,7 +1,8 @@
-﻿using System.Globalization;
-using Carma2ForgeLib.Enums;
+﻿namespace Carma2ForgeLib.Modules.RaceModule {
+  using System.Globalization;
+  using Carma2ForgeLib.Enums;
+  using Carma2ForgeLib.Modules.TwtModule;
 
-namespace Carma2ForgeLib.Modules.RaceModule {
   internal enum RacesFileBlockType {
     FirstRaceDev,
     DefaultParams,
@@ -67,10 +68,13 @@ namespace Carma2ForgeLib.Modules.RaceModule {
 
   public class RaceModule : BaseModule {
     private Carma2ForgeConfig config;
+    private TwtModule twtModule;
     private RacesFile racesFile;
 
     public void Initialize(Carma2ForgeConfig config) {
       this.config = config;
+      twtModule = new TwtModule();
+      twtModule.Initialize(config);
 
       LoadRacesFile();
     }
@@ -80,7 +84,10 @@ namespace Carma2ForgeLib.Modules.RaceModule {
     }
 
     public RacesFile LoadRacesFile() {
-      using IEnumerator<string> racesTxtLines = config.ReadTxt(Carma2File.Races).GetEnumerator();
+      TwtFile dataFile = twtModule.LoadTwt(Carma2File.Data);
+      TwtFileEntry racesTxt = dataFile.GetFile(Carma2File.Races);
+
+      using IEnumerator<string> racesTxtLines = config.ReadTxt(racesTxt).GetEnumerator();
 
       this.racesFile = new RacesFile();
       List<RaceEntry> raceEntries = new List<RaceEntry>();
